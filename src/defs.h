@@ -1,26 +1,9 @@
 #pragma once
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DEBUG
-
-#ifndef DEBUG
-#define ASSERT(n)
-#else
-#define ASSERT(n)                                                                                                      \
-    do {                                                                                                               \
-        if (!(n)) {                                                                                                    \
-            printf("%s ", __DATE__);                                                                                   \
-            printf("%s: ", __TIME__);                                                                                  \
-            printf("Assertion '%s' failed.\n", #n);                                                                    \
-            printf("File '%s'\n", __FILE__);                                                                           \
-            printf("Line %d\n", __LINE__);                                                                             \
-            getchar();                                                                                                 \
-            exit(1);                                                                                                   \
-        }                                                                                                              \
-    } while (0);
-#endif
 
 typedef unsigned long long U64;
 
@@ -31,12 +14,20 @@ typedef unsigned long long U64;
 
 #define START_FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
-enum { EMPTY, wP, wN, wB, wR, wQ, wK, bP, bN, bB, bR, bQ, bK };
+enum {
+    EMPTY, wP, wN, wB, wR, wQ, wK, bP, bN, bB, bR, bQ, bK
+};
 
-enum { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, FILE_NONE };
-enum { RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8, RANK_NONE };
+enum {
+    FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, FILE_NONE
+};
+enum {
+    RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8, RANK_NONE
+};
 
-enum { WHITE, BLACK, BOTH };
+enum {
+    WHITE, BLACK, BOTH
+};
 
 // clang-format off
 enum {
@@ -53,9 +44,13 @@ enum {
 };
 // clang-format on
 
-enum { FALSE, TRUE };
+enum {
+    FALSE, TRUE
+};
 
-enum { WKCA = 1, WQCA = 2, BKCA = 4, BQCA = 8 };
+enum {
+    WKCA = 1, WQCA = 2, BKCA = 4, BQCA = 8
+};
 
 typedef struct {
     int move;
@@ -98,13 +93,17 @@ extern int sq64to120[64];
 
 /* MACROS */
 
-#define FR2SQ(f, /*  */ r) ((21 + (f) + ((r)*10)))
+#define FR2SQ(f,r) ((21 + (f) + ((r)*10)))
 #define SQ64(sq120) (sq120to64[(sq120)])
 #define SQ120(sq64) (sq64to120[(sq64)])
 #define CLRBIT(bb, sq) ((bb) &= ClearMask[(sq)])
 #define SETBIT(bb, sq) ((bb) |= SetMask[(sq)])
 #define POP(b) PopBit(b)
 #define CNT(b) CountBits(b)
+#define IsKn(p) ((p) == wN || (p) == bN)
+#define IsKi(p) ((p) == wK || (p) == bK)
+#define IsBQ(p) ((p) == wB || (p) == bB || (p) == wQ || (p) == bQ)
+#define IsRQ(p) ((p) == wR || (p) == bR || (p) == wQ || (p) == bQ)
 
 /* GLOBALS */
 extern int sq120to64[BRD_SQ_NUM];
@@ -154,8 +153,26 @@ extern void ResetBoard(S_BOARD *pos);
 extern void PrintBoard(const S_BOARD *pos);
 
 // data.c
+
+extern int PiecePawn[13];
+extern int PieceKnight[13];
+extern int PieceKing[13];
+extern int PieceRookQueen[13];
+extern int PieceBishopQueen[13];
+extern int PieceSlides[13];
+
 extern int PieceBig[13];
 extern int PieceMaj[13];
 extern int PieceMin[13];
 extern int PieceVal[13];
 extern int PieceCol[13];
+
+// attack.c
+extern int KnightMoves[8];
+extern int BishopMoves[4];
+extern int QueenMoves[8];
+extern int KingMoves[8];
+extern int RookMoves[4];
+
+extern int SqAttacked(S_BOARD *pos, int sq, int side);
+extern void VisualizeAttackedSquares(S_BOARD *pos, int side);

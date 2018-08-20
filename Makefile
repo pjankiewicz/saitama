@@ -123,6 +123,33 @@ saitama/fast:
 	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/build
 .PHONY : saitama/fast
 
+src/attack.o: src/attack.c.o
+
+.PHONY : src/attack.o
+
+# target to build an object file
+src/attack.c.o:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/attack.c.o
+.PHONY : src/attack.c.o
+
+src/attack.i: src/attack.c.i
+
+.PHONY : src/attack.i
+
+# target to preprocess a source file
+src/attack.c.i:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/attack.c.i
+.PHONY : src/attack.c.i
+
+src/attack.s: src/attack.c.s
+
+.PHONY : src/attack.s
+
+# target to generate assembly for a file
+src/attack.c.s:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/attack.c.s
+.PHONY : src/attack.c.s
+
 src/bitboard.o: src/bitboard.c.o
 
 .PHONY : src/bitboard.o
@@ -294,6 +321,9 @@ help:
 	@echo "... rebuild_cache"
 	@echo "... saitama"
 	@echo "... edit_cache"
+	@echo "... src/attack.o"
+	@echo "... src/attack.i"
+	@echo "... src/attack.s"
 	@echo "... src/bitboard.o"
 	@echo "... src/bitboard.i"
 	@echo "... src/bitboard.s"

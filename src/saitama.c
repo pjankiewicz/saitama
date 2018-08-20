@@ -23,10 +23,22 @@ int main() {
     AllInit();
 
     S_BOARD board;
-    printf("Parsing\n");
-    ParseFen(START_FEN, &board);
-    PrintBoard(&board);
-    CheckBoard(&board);
+//    printf("Parsing\n");
+//    ParseFen(START_FEN, &board);
+//    PrintBoard(&board);
+//    printf("Hello");
+//    CheckBoard(&board);
+
+//    char fen[] = "6k1/5p2/6p1/8/7p/8/6PP/6K1 b - - 0 0";
+//    char fen[] = "3k4/2n2B2/1KP5/2B2p2/5b1p/7P/8/8 b - - 0 0";
+    char fen[] = "8/3q4/8/8/4Q3/8/8/8 w  - - 0 0";
+    S_BOARD pos;
+    ParseFen(fen, &pos);
+    PrintBoard(&pos);
+    printf("\n");
+    VisualizeAttackedSquares(&pos, WHITE);
+    printf("\n");
+    VisualizeAttackedSquares(&pos, BLACK);
 
     return 0;
 }

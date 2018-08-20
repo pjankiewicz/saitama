@@ -26,11 +26,11 @@ U64 GeneratePosKey(const S_BOARD *pos) {
         finalKey ^= SideKey;
 
     if (pos->enPas != NO_SQ) {
-        ASSERT(pos->enPas > 0 && pos->enPas <= BRD_SQ_NUM);
+        assert(pos->enPas > 0 && pos->enPas <= BRD_SQ_NUM);
         finalKey ^= PieceKeys[EMPTY][pos->enPas];
     }
 
-    ASSERT(pos->castlePerm > 0 && pos->castlePerm < 16);
+    assert(pos->castlePerm >= 0 && pos->castlePerm < 16);
 
     finalKey ^= CastleKeys[pos->castlePerm];
 

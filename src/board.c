@@ -15,11 +15,15 @@ int CheckBoard(S_BOARD *pos) {
     t_pawns[BLACK] = pos->pawns[BLACK];
     t_pawns[BOTH] = pos->pawns[BOTH];
 
+    PrintBitBoard(pos->pawns[WHITE]);
+    PrintBitBoard(pos->pawns[BLACK]);
+    PrintBitBoard(pos->pawns[BOTH]);
+
     // check piece list
     for (piece = wP; piece <= bK; ++piece) {
         for (int pce_num = 0; pce_num < pos->pceNum[piece]; ++pce_num) {
             sq120 = pos->pList[piece][pce_num];
-            ASSERT(pos->pieces[sq120] == piece);
+            assert(pos->pieces[sq120] == piece);
         }
     }
 
@@ -38,46 +42,46 @@ int CheckBoard(S_BOARD *pos) {
     }
 
     for (int i = wP; i <= bK; i++) {
-        ASSERT(pos->pceNum[i] == t_pceNum[i])
+        assert(pos->pceNum[i] == t_pceNum[i]);
     }
 
-    ASSERT(pos->material[WHITE] == t_material[WHITE]);
-    ASSERT(pos->material[BLACK] == t_material[BLACK]);
-    ASSERT(pos->bigPce[WHITE] == t_bigPce[WHITE]);
-    ASSERT(pos->bigPce[BLACK] == t_bigPce[BLACK]);
-    ASSERT(pos->majPce[WHITE] == t_majPce[WHITE]);
-    ASSERT(pos->majPce[BLACK] == t_majPce[BLACK]);
-    ASSERT(pos->minPce[WHITE] == t_minPce[WHITE]);
-    ASSERT(pos->minPce[BLACK] == t_minPce[BLACK]);
+    assert(pos->material[WHITE] == t_material[WHITE]);
+    assert(pos->material[BLACK] == t_material[BLACK]);
+    assert(pos->bigPce[WHITE] == t_bigPce[WHITE]);
+    assert(pos->bigPce[BLACK] == t_bigPce[BLACK]);
+    assert(pos->majPce[WHITE] == t_majPce[WHITE]);
+    assert(pos->majPce[BLACK] == t_majPce[BLACK]);
+    assert(pos->minPce[WHITE] == t_minPce[WHITE]);
+    assert(pos->minPce[BLACK] == t_minPce[BLACK]);
 
-    ASSERT(pos->posKey == GeneratePosKey(pos));
+    assert(pos->posKey == GeneratePosKey(pos));
 
     if ((pos->side == WHITE) && (pos->enPas != NO_SQ))
-        ASSERT(RanksBrd[pos->enPas] == 6);
+        assert(RanksBrd[pos->enPas] == 6);
     if ((pos->side == BLACK) && (pos->enPas != NO_SQ))
-        ASSERT(RanksBrd[pos->enPas] == 3);
+        assert(RanksBrd[pos->enPas] == 3);
 
     pawn_count = CNT(t_pawns[WHITE]);
-    ASSERT(pawn_count == pos->pceNum[wP])
+    assert(pawn_count == pos->pceNum[wP]);
     pawn_count = CNT(t_pawns[BLACK]);
-    ASSERT(pawn_count == pos->pceNum[bP])
+    assert(pawn_count == pos->pceNum[bP]);
     pawn_count = CNT(t_pawns[BOTH]);
-    ASSERT(pawn_count == pos->pceNum[wP] + pos->pceNum[bP])
+    assert(pawn_count == pos->pceNum[wP] + pos->pceNum[bP]);
 
     while (t_pawns[WHITE]) {
         sq64 = POP(&t_pawns[WHITE]);
-        ASSERT(pos->pieces[sq64] == wP)
+        assert(pos->pieces[SQ120(sq64)] == wP);
     }
     while (t_pawns[BLACK]) {
         sq64 = POP(&t_pawns[BLACK]);
-        ASSERT(pos->pieces[sq64] == wP)
+        assert(pos->pieces[SQ120(sq64)] == bP);
     }
     while (t_pawns[BOTH]) {
         sq64 = POP(&t_pawns[BOTH]);
-        ASSERT((pos->pieces[sq64] == wP) || (pos->pieces[sq64] == bP))
+        assert((pos->pieces[SQ120(sq64)] == wP) || (pos->pieces[SQ120(sq64)] == bP));
     }
 
-    ASSERT(pos->side == WHITE || pos->side == BLACK)
+    assert(pos->side == WHITE || pos->side == BLACK);
 
     return TRUE;
 }
@@ -88,7 +92,6 @@ void UpdateListsMaterial(S_BOARD *pos) {
         sq = index;
         piece = pos->pieces[index];
         if (piece != OFFBOARD && piece != EMPTY) {
-            pos->pceNum[piece]++;
             color = PieceCol[piece];
             if (PieceBig[piece])
                 pos->bigPce[color]++;
@@ -112,6 +115,8 @@ void UpdateListsMaterial(S_BOARD *pos) {
                 SETBIT(pos->pawns[BLACK], SQ64(sq));
                 SETBIT(pos->pawns[BOTH], SQ64(sq));
             }
+
+            pos->pceNum[piece]++;
         }
     }
 }
@@ -121,13 +126,12 @@ int ParseFen(char *fen, S_BOARD *pos) {
      "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
      */
 
-    ASSERT(fen != NULL);
-    ASSERT(pos != NULL);
+    assert(fen != NULL);
+    assert(pos != NULL);
 
     int rank = RANK_8;
-    int file = FILE_NONE;
+    int file = FILE_A;
     int piece = 0;
-    int current_sq = 0;
     int count = 0;
 
     printf("Reseting board\n");
@@ -187,6 +191,7 @@ int ParseFen(char *fen, S_BOARD *pos) {
             case ' ':
                 fen++;
                 rank--;
+                file = FILE_A;
                 continue;
             default:
                 printf("FEN error\n");
@@ -194,13 +199,13 @@ int ParseFen(char *fen, S_BOARD *pos) {
         }
 
         for (int i = 0; i < count; i++) {
-            pos->pieces[SQ120(current_sq)] = piece;
-            current_sq++;
+            pos->pieces[FR2SQ(file, rank)] = piece;
+            file += 1;
         }
         fen++;
     }
 
-    ASSERT(*fen == 'w' || *fen == 'b')
+    assert(*fen == 'w' || *fen == 'b');
 
     pos->side = (*fen == 'w') ? WHITE : BLACK;
     fen += 2;
@@ -222,19 +227,21 @@ int ParseFen(char *fen, S_BOARD *pos) {
                 break;
             case '-':
                 break;
+            default:
+                break;
         }
         fen++;
     }
     fen++;
 
-    ASSERT(pos->castlePerm > 0 && pos->castlePerm <= 15);
+    assert(pos->castlePerm >= 0 && pos->castlePerm <= 15);
 
     // en passant square
     if (*fen != '-') {
-        int file = fen[0] - 'a';
-        int rank = fen[1] - '1';
-        ASSERT(file >= FILE_A && file <= FILE_H);
-        ASSERT(rank >= RANK_1 && rank <= RANK_8);
+        file = fen[0] - 'a';
+        rank = fen[1] - '1';
+        assert(file >= FILE_A && file <= FILE_H);
+        assert(rank >= RANK_1 && rank <= RANK_8);
         pos->enPas = FR2SQ(file, rank);
     } else {
         fen += 2;
@@ -289,16 +296,16 @@ void ResetBoard(S_BOARD *pos) {
 }
 
 void PrintBoard(const S_BOARD *pos) {
-    int rank = 8;
+    int rank = 0;
+    int file = 0;
     printf("Board:\n");
-    for (int sq = 0; sq < 64; sq++) {
-        if ((sq % 8 == 0)) {
-            printf("\n");
-            printf("%d", rank--);
+    for (rank = RANK_8; rank >= RANK_1; rank--) {
+        printf("\n");
+        for (file = FILE_A; file <= FILE_H; file++) {
+            printf("%3c", PceChar[pos->pieces[FR2SQ(file, rank)]]);
         }
-        printf("%3c", PceChar[pos->pieces[SQ120(sq)]]);
     }
-    printf("\n\n ");
+    printf("\n");
     for (int file = FILE_A; file <= FILE_H; file++) {
         printf("%3c", 'a' + file);
     }
