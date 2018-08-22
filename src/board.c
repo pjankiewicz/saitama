@@ -1,6 +1,6 @@
 #include "defs.h"
 
-int CheckBoard(S_BOARD *pos) {
+int CheckBoard(const S_BOARD *pos) {
     int t_pceNum[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     int t_bigPce[] = {0, 0};
     int t_majPce[] = {0, 0};
@@ -57,9 +57,9 @@ int CheckBoard(S_BOARD *pos) {
     assert(pos->posKey == GeneratePosKey(pos));
 
     if ((pos->side == WHITE) && (pos->enPas != NO_SQ))
-        assert(RanksBrd[pos->enPas] == 6);
+        assert(RanksBrd[pos->enPas] == RANK_6);
     if ((pos->side == BLACK) && (pos->enPas != NO_SQ))
-        assert(RanksBrd[pos->enPas] == 3);
+        assert(RanksBrd[pos->enPas] == RANK_3);
 
     pawn_count = CNT(t_pawns[WHITE]);
     assert(pawn_count == pos->pceNum[wP]);
@@ -140,62 +140,62 @@ int ParseFen(char *fen, S_BOARD *pos) {
     while ((rank >= RANK_1) && *fen) {
         count = 1;
         switch (*fen) {
-            case 'p':
-                piece = bP;
-                break;
-            case 'r':
-                piece = bR;
-                break;
-            case 'n':
-                piece = bN;
-                break;
-            case 'b':
-                piece = bB;
-                break;
-            case 'k':
-                piece = bK;
-                break;
-            case 'q':
-                piece = bQ;
-                break;
-            case 'P':
-                piece = wP;
-                break;
-            case 'R':
-                piece = wR;
-                break;
-            case 'N':
-                piece = wN;
-                break;
-            case 'B':
-                piece = wB;
-                break;
-            case 'K':
-                piece = wK;
-                break;
-            case 'Q':
-                piece = wQ;
-                break;
-            case '1':
-            case '2':
-            case '3':
-            case '4':
-            case '5':
-            case '6':
-            case '7':
-            case '8':
-                piece = EMPTY;
-                count = *fen - '0';
-                break;
-            case '/':
-            case ' ':
-                fen++;
-                rank--;
-                file = FILE_A;
-                continue;
-            default:
-                printf("FEN error\n");
-                return 0;
+        case 'p':
+            piece = bP;
+            break;
+        case 'r':
+            piece = bR;
+            break;
+        case 'n':
+            piece = bN;
+            break;
+        case 'b':
+            piece = bB;
+            break;
+        case 'k':
+            piece = bK;
+            break;
+        case 'q':
+            piece = bQ;
+            break;
+        case 'P':
+            piece = wP;
+            break;
+        case 'R':
+            piece = wR;
+            break;
+        case 'N':
+            piece = wN;
+            break;
+        case 'B':
+            piece = wB;
+            break;
+        case 'K':
+            piece = wK;
+            break;
+        case 'Q':
+            piece = wQ;
+            break;
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+            piece = EMPTY;
+            count = *fen - '0';
+            break;
+        case '/':
+        case ' ':
+            fen++;
+            rank--;
+            file = FILE_A;
+            continue;
+        default:
+            printf("FEN error\n");
+            return 0;
         }
 
         for (int i = 0; i < count; i++) {
@@ -213,22 +213,22 @@ int ParseFen(char *fen, S_BOARD *pos) {
     // castle permissions
     while (*fen != ' ') {
         switch (*fen) {
-            case 'K':
-                pos->castlePerm |= WKCA;
-                break;
-            case 'Q':
-                pos->castlePerm |= WQCA;
-                break;
-            case 'k':
-                pos->castlePerm |= BKCA;
-                break;
-            case 'q':
-                pos->castlePerm |= BQCA;
-                break;
-            case '-':
-                break;
-            default:
-                break;
+        case 'K':
+            pos->castlePerm |= WKCA;
+            break;
+        case 'Q':
+            pos->castlePerm |= WQCA;
+            break;
+        case 'k':
+            pos->castlePerm |= BKCA;
+            break;
+        case 'q':
+            pos->castlePerm |= BQCA;
+            break;
+        case '-':
+            break;
+        default:
+            break;
         }
         fen++;
     }
@@ -241,7 +241,7 @@ int ParseFen(char *fen, S_BOARD *pos) {
         file = fen[0] - 'a';
         rank = fen[1] - '1';
         assert(file >= FILE_A && file <= FILE_H);
-        assert(rank >= RANK_1 && rank <= RANK_8);
+        assert(rank == RANK_3 || rank == RANK_6);
         pos->enPas = FR2SQ(file, rank);
     } else {
         fen += 2;

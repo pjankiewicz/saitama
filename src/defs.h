@@ -4,30 +4,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-
 typedef unsigned long long U64;
 
 #define NAME "Saitama 1.0"
 #define BRD_SQ_NUM 120
 
 #define MAXGAMEMOVES 2048 // max half moves
+#define MAXPOSITIONMOVES 256
 
 #define START_FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
-enum {
-    EMPTY, wP, wN, wB, wR, wQ, wK, bP, bN, bB, bR, bQ, bK
-};
+enum { EMPTY, wP, wN, wB, wR, wQ, wK, bP, bN, bB, bR, bQ, bK };
 
-enum {
-    FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, FILE_NONE
-};
-enum {
-    RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8, RANK_NONE
-};
+enum { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, FILE_NONE };
+enum { RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8, RANK_NONE };
 
-enum {
-    WHITE, BLACK, BOTH
-};
+enum { WHITE, BLACK, BOTH };
 
 // clang-format off
 enum {
@@ -44,13 +36,55 @@ enum {
 };
 // clang-format on
 
-enum {
-    FALSE, TRUE
-};
+enum { FALSE, TRUE };
 
-enum {
-    WKCA = 1, WQCA = 2, BKCA = 4, BQCA = 8
-};
+enum { WKCA = 1, WQCA = 2, BKCA = 4, BQCA = 8 };
+
+typedef struct {
+    int move;
+    int score;
+} S_MOVE;
+
+/* GAME MOVE */
+
+/*
+
+encode whole move in a single int
+
+ 0000 0000 0000 0000 0000 0111 1111 -> From (7 bits) 0x7F
+ 0000 0000 0000 0011 1111 1000 0000 -> To   (7 bits) >> 7, 0x7F
+ 0000 0000 0011 1100 0000 0000 0000 -> Captured (4 bits) >> 14, 0xF
+ 0000 0000 0100 0000 0000 0000 0000 -> EP 0x40000
+ 0000 0000 1000 0000 0000 0000 0000 -> Pawn start 0x80000
+ 0000 1111 0000 0000 0000 0000 0000 -> Promoted Piece >> 20 0xF
+ 0001 0000 0000 0000 0000 0000 0000 -> Castle 0x1000000
+
+ These days I prefer:
+* from square: 6-bits
+* to square: 6-bits
+* promotion: 4 bits (Knight=0...Queen=3)
+
+ You don't need flags for en passant, castling, or promotion:
+* move is promotion is from square has a pawn on it, to square is on the (relative) eighth rank
+* move is en passant if to square is en passant square, and from square has a pawn on it
+* move is castling if king captures his own rook (handles chess and chess960 in a unified way).
+ */
+
+#define FROMSQ(m) ((m)&0x7f)
+#define TOSQ(m) (((m) >> 7) & 0x7f)
+#define CAPTURED(m) (((m) >> 14) & 0xf)
+#define PROMOTED(m) (((m) >> 20) & 0xf)
+
+#define MFLAGEP 0x00040000
+#define MFLAGPS 0x00080000
+#define MFLAGCA 0x01000000
+#define MFLAGCAP 0x0007C000
+#define MFLAGPROM 0x00f00000
+
+typedef struct {
+    S_MOVE moves[MAXPOSITIONMOVES];
+    int count;
+} S_MOVELIST;
 
 typedef struct {
     int move;
@@ -93,7 +127,7 @@ extern int sq64to120[64];
 
 /* MACROS */
 
-#define FR2SQ(f,r) ((21 + (f) + ((r)*10)))
+#define FR2SQ(f, r) ((21 + (f) + ((r)*10)))
 #define SQ64(sq120) (sq120to64[(sq120)])
 #define SQ120(sq64) (sq64to120[(sq64)])
 #define CLRBIT(bb, sq) ((bb) &= ClearMask[(sq)])
@@ -103,7 +137,10 @@ extern int sq64to120[64];
 #define IsKn(p) ((p) == wN || (p) == bN)
 #define IsKi(p) ((p) == wK || (p) == bK)
 #define IsBQ(p) ((p) == wB || (p) == bB || (p) == wQ || (p) == bQ)
+#define IsQ(p) ((p) == wQ || (p) == bQ)
+#define IsB(p) ((p) == wB || (p) == bB)
 #define IsRQ(p) ((p) == wR || (p) == bR || (p) == wQ || (p) == bQ)
+#define IsR(p) ((p) == wR || (p) == bR)
 
 /* GLOBALS */
 extern int sq120to64[BRD_SQ_NUM];
@@ -142,7 +179,7 @@ extern char SideChar[];
 extern char RankChar[];
 extern char FileChar[];
 
-extern int CheckBoard(S_BOARD *pos);
+extern int CheckBoard(const S_BOARD *pos);
 
 extern void UpdateListsMaterial(S_BOARD *pos);
 
@@ -175,4 +212,34 @@ extern int KingMoves[8];
 extern int RookMoves[4];
 
 extern int SqAttacked(S_BOARD *pos, int sq, int side);
+
 extern void VisualizeAttackedSquares(S_BOARD *pos, int side);
+
+// io.c
+
+extern char *PrSq(const int sq);
+
+extern char *PrMove(const int move);
+void PrintMoveList(const S_MOVELIST *list);
+
+// movegen.c
+
+void AddQuietMove(const S_BOARD *pos, int move, S_MOVELIST *list);
+
+void AddCaptureMove(const S_BOARD *pos, int move, S_MOVELIST *list);
+
+void AddEnPassantMove(const S_BOARD *pos, int move, S_MOVELIST *list);
+
+void GenerateAllMoves(const S_BOARD *pos, S_MOVELIST *moves);
+
+// validate.c
+
+int SqOnBoard(const int sq);
+
+int SideValid(const int side);
+
+int FileRankValid(const int fr);
+
+int PieceValidEmpty(const int pce);
+
+int PieceValid(const int pce);

@@ -285,6 +285,60 @@ src/init.c.s:
 	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/init.c.s
 .PHONY : src/init.c.s
 
+src/io.o: src/io.c.o
+
+.PHONY : src/io.o
+
+# target to build an object file
+src/io.c.o:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/io.c.o
+.PHONY : src/io.c.o
+
+src/io.i: src/io.c.i
+
+.PHONY : src/io.i
+
+# target to preprocess a source file
+src/io.c.i:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/io.c.i
+.PHONY : src/io.c.i
+
+src/io.s: src/io.c.s
+
+.PHONY : src/io.s
+
+# target to generate assembly for a file
+src/io.c.s:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/io.c.s
+.PHONY : src/io.c.s
+
+src/movegen.o: src/movegen.c.o
+
+.PHONY : src/movegen.o
+
+# target to build an object file
+src/movegen.c.o:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/movegen.c.o
+.PHONY : src/movegen.c.o
+
+src/movegen.i: src/movegen.c.i
+
+.PHONY : src/movegen.i
+
+# target to preprocess a source file
+src/movegen.c.i:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/movegen.c.i
+.PHONY : src/movegen.c.i
+
+src/movegen.s: src/movegen.c.s
+
+.PHONY : src/movegen.s
+
+# target to generate assembly for a file
+src/movegen.c.s:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/movegen.c.s
+.PHONY : src/movegen.c.s
+
 src/saitama.o: src/saitama.c.o
 
 .PHONY : src/saitama.o
@@ -311,6 +365,33 @@ src/saitama.s: src/saitama.c.s
 src/saitama.c.s:
 	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/saitama.c.s
 .PHONY : src/saitama.c.s
+
+src/validate.o: src/validate.c.o
+
+.PHONY : src/validate.o
+
+# target to build an object file
+src/validate.c.o:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/validate.c.o
+.PHONY : src/validate.c.o
+
+src/validate.i: src/validate.c.i
+
+.PHONY : src/validate.i
+
+# target to preprocess a source file
+src/validate.c.i:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/validate.c.i
+.PHONY : src/validate.c.i
+
+src/validate.s: src/validate.c.s
+
+.PHONY : src/validate.s
+
+# target to generate assembly for a file
+src/validate.c.s:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/validate.c.s
+.PHONY : src/validate.c.s
 
 # Help Target
 help:
@@ -339,9 +420,18 @@ help:
 	@echo "... src/init.o"
 	@echo "... src/init.i"
 	@echo "... src/init.s"
+	@echo "... src/io.o"
+	@echo "... src/io.i"
+	@echo "... src/io.s"
+	@echo "... src/movegen.o"
+	@echo "... src/movegen.i"
+	@echo "... src/movegen.s"
 	@echo "... src/saitama.o"
 	@echo "... src/saitama.i"
 	@echo "... src/saitama.s"
+	@echo "... src/validate.o"
+	@echo "... src/validate.i"
+	@echo "... src/validate.s"
 .PHONY : help
 
 

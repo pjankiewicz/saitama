@@ -46,6 +46,10 @@ int SqAttacked(S_BOARD *pos, int sq, int side) {
 
     int index, cur_sq, piece;
 
+    assert(SqOnBoard(sq));
+    assert(SideValid(side));
+    assert(CheckBoard(pos));
+
     // attacked by pawn
     if (side == WHITE && ((pos->pieces[sq - 9] == wP) || (pos->pieces[sq - 11] == wP))) {
         return TRUE;

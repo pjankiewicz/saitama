@@ -1,5 +1,4 @@
 #include "defs.h"
-#include "stdio.h"
 
 int printBoard() {
     int index = 0;
@@ -17,28 +16,31 @@ int printBoard() {
     printf("\n\r");
 }
 
+// vice.c
+
+#define PAWNMOVES "rnbqkb1r/pp1p1pPp/8/2p1pP2/1P1P4/3P3P/P1P1P3/RNBQKBNR w KQkq e6 0 1"
+#define PAWNMOVES2 "rnbqkb1r/pp1p1pPp/8/2p1pP2/1P1P4/3P3P/P1P1P3/RNBQKBNR b KQkq - 0 1"
+#define PAWNMOVESW "rnbqkb1r/pp1p1pPp/8/2p1pP2/1P1P4/3P3P/P1P1P3/RNBQKBNR w KQkq e6 0 1"
+#define PAWNMOVESB "rnbqkbnr/p1p1p3/3p3p/1p1p4/2P1Pp2/8/PP1P1PpP/RNBQKB1R b KQkq e3 0 1"
+#define KNIGHTSKINGS "5k2/1n6/4n3/6N1/8/3N4/8/5K2 w - - 0 1"
+#define ROOKS "6k1/8/5r2/8/1nR5/5N2/8/6K1 b - - 0 1"
+#define QUEENS "6k1/8/4nq2/8/1nQ5/5N2/1N6/6K1 b - - 0 1 "
+#define BISHOPS "6k1/1b6/4n3/8/1n4B1/1B3N2/1N6/2b3K1 b - - 0 1 "
+
 int main() {
-    printf("%s\n", NAME);
-    printf("Initializing.\n");
+
     AllInit();
 
-    S_BOARD board;
-//    printf("Parsing\n");
-//    ParseFen(START_FEN, &board);
-//    PrintBoard(&board);
-//    printf("Hello");
-//    CheckBoard(&board);
+    S_BOARD board[1];
 
-//    char fen[] = "6k1/5p2/6p1/8/7p/8/6PP/6K1 b - - 0 0";
-//    char fen[] = "3k4/2n2B2/1KP5/2B2p2/5b1p/7P/8/8 b - - 0 0";
-    char fen[] = "8/3q4/8/8/4Q3/8/8/8 w  - - 0 0";
-    S_BOARD pos;
-    ParseFen(fen, &pos);
-    PrintBoard(&pos);
-    printf("\n");
-    VisualizeAttackedSquares(&pos, WHITE);
-    printf("\n");
-    VisualizeAttackedSquares(&pos, BLACK);
+    ParseFen(BISHOPS, board);
+    PrintBoard(board);
+
+    S_MOVELIST list[1];
+
+    GenerateAllMoves(board, list);
+
+    PrintMoveList(list);
 
     return 0;
 }
