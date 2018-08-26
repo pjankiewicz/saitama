@@ -19,19 +19,15 @@ const int CA_BKC = WKCA | WQCA | BQCA;
 const int CA_BQC = WKCA | WQCA | BKCA;
 
 const int CastlePerm[120] = {
-        CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL,
-        CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL,
-        CA_ALL, CA_WQC, CA_ALL, CA_ALL, CA_ALL, CA_W, CA_ALL, CA_ALL, CA_WKC, CA_ALL,
-        CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL,
-        CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL,
-        CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL,
-        CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL,
-        CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL,
-        CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL,
-        CA_ALL, CA_BQC, CA_ALL, CA_ALL, CA_ALL, CA_B, CA_ALL, CA_ALL, CA_BKC, CA_ALL,
-        CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL,
-        CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL
-};
+    CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL,
+    CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_WQC, CA_ALL, CA_ALL, CA_ALL, CA_W,   CA_ALL, CA_ALL,
+    CA_WKC, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL,
+    CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL,
+    CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL,
+    CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL,
+    CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_BQC, CA_ALL, CA_ALL, CA_ALL, CA_B,   CA_ALL, CA_ALL,
+    CA_BKC, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL,
+    CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL, CA_ALL};
 
 static void ClearPiece(const int sq, S_BOARD *pos) {
     assert(SqOnBoard(sq));
@@ -158,36 +154,37 @@ int MakeMove(S_BOARD *pos, int move) {
 
     if (move & MFLAGEP) {
         if (side == WHITE) {
-            assert(pos->pieces[to+DOWN] == bP);
-            ClearPiece(to+DOWN, pos);
+            assert(pos->pieces[to + DOWN] == bP);
+            ClearPiece(to + DOWN, pos);
         } else {
-            assert(pos->pieces[to+UP] == wP);
-            ClearPiece(to+UP, pos);
+            assert(pos->pieces[to + UP] == wP);
+            ClearPiece(to + UP, pos);
         }
     } else if (move & MFLAGCA) {
-//        printf("%d %s\n", PrSq(to));
+        //        printf("%d %s\n", PrSq(to));
 
-        assert(pos->pieces[from] == wK || pos->pieces[from] ==bK);
+        assert(pos->pieces[from] == wK || pos->pieces[from] == bK);
         switch (to) {
-            case C1:
-                MovePiece(A1, D1, pos);
-                break;
-            case C8:
-                MovePiece(A8, D8, pos);
-                break;
-            case G1:
-                MovePiece(H1, F1, pos);
-                break;
-            case G8:
-                MovePiece(H8, F8, pos);
-                break;
-            default:
-                assert(FALSE);
-                break;
+        case C1:
+            MovePiece(A1, D1, pos);
+            break;
+        case C8:
+            MovePiece(A8, D8, pos);
+            break;
+        case G1:
+            MovePiece(H1, F1, pos);
+            break;
+        case G8:
+            MovePiece(H8, F8, pos);
+            break;
+        default:
+            assert(FALSE);
+            break;
         }
     }
 
-    if (pos->enPas != NO_SQ) HASH_EP;
+    if (pos->enPas != NO_SQ)
+        HASH_EP;
     HASH_CA;
 
     pos->castlePerm &= CastlePerm[from];
@@ -212,11 +209,11 @@ int MakeMove(S_BOARD *pos, int move) {
         pos->fiftyMove = 0;
         if (move & MFLAGPS) {
             if (side == WHITE) {
-                pos->enPas = from+UP;
-                assert(RanksBrd[from+UP]==RANK_3);
+                pos->enPas = from + UP;
+                assert(RanksBrd[from + UP] == RANK_3);
             } else {
-                pos->enPas = from+DOWN;
-                assert(RanksBrd[from+DOWN]==RANK_6);
+                pos->enPas = from + DOWN;
+                assert(RanksBrd[from + DOWN] == RANK_6);
             }
             HASH_EP;
         }
@@ -250,10 +247,11 @@ void TakeMove(S_BOARD *pos) {
     assert(CheckBoard(pos));
 
     assert(pos->hisPly > 0);
-    S_UNDO undo = pos->history[pos->hisPly-1];
+    S_UNDO undo = pos->history[pos->hisPly - 1];
     int move = undo.move;
 
-    if (pos->enPas != NO_SQ) HASH_EP;
+    if (pos->enPas != NO_SQ)
+        HASH_EP;
     HASH_CA;
 
     pos->castlePerm = undo.castlePerm;
@@ -262,7 +260,8 @@ void TakeMove(S_BOARD *pos) {
     pos->hisPly--;
     pos->ply--;
 
-    if (pos->enPas != NO_SQ) HASH_EP;
+    if (pos->enPas != NO_SQ)
+        HASH_EP;
     HASH_CA;
 
     pos->side ^= 1;
@@ -277,27 +276,27 @@ void TakeMove(S_BOARD *pos) {
 
     if (move & MFLAGEP) {
         if (side == WHITE) {
-            AddPiece(to+DOWN, pos, bP);
+            AddPiece(to + DOWN, pos, bP);
         } else {
-            AddPiece(to+UP, pos, wP);
+            AddPiece(to + UP, pos, wP);
         }
     } else if (move & MFLAGCA) {
         switch (to) {
-            case C1:
-                MovePiece(D1, A1, pos);
-                break;
-            case C8:
-                MovePiece(D8, A8, pos);
-                break;
-            case G1:
-                MovePiece(F1, H1, pos);
-                break;
-            case G8:
-                MovePiece(F8, H8, pos);
-                break;
-            default:
-                assert(FALSE);
-                break;
+        case C1:
+            MovePiece(D1, A1, pos);
+            break;
+        case C8:
+            MovePiece(D8, A8, pos);
+            break;
+        case G1:
+            MovePiece(F1, H1, pos);
+            break;
+        case G8:
+            MovePiece(F8, H8, pos);
+            break;
+        default:
+            assert(FALSE);
+            break;
         }
     }
 
@@ -305,11 +304,11 @@ void TakeMove(S_BOARD *pos) {
 
     int captured = CAPTURED(move);
     if (captured != EMPTY) {
-        AddPiece(to, pos, captured);                       // add back the captured piece
+        AddPiece(to, pos, captured); // add back the captured piece
     }
 
     if (PROMOTED(move) != EMPTY) {
-        ClearPiece(from, pos);                               // remove the promoted piece
+        ClearPiece(from, pos);                             // remove the promoted piece
         AddPiece(from, pos, pos->side == WHITE ? wP : bP); // add back the pawn
     }
 
@@ -317,6 +316,6 @@ void TakeMove(S_BOARD *pos) {
         pos->kingSq[pos->side] = from;
     }
 
-//    pos->posKey = undo.posKey;
+    //    pos->posKey = undo.posKey;
     assert(CheckBoard(pos));
 }

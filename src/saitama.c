@@ -27,7 +27,7 @@ void PrintMove(int move) {
 }
 
 void StupidGame() {
-    S_BOARD board[1];
+    S_BOARD *board = CreateNewBoard();
     S_MOVELIST moveslist[1];
 
     ParseFen(START_FEN, board);
@@ -36,7 +36,7 @@ void StupidGame() {
     int movenum = 0;
     int move = 0;
 
-    for (int i=0; i<2024; i++) {
+    for (int i = 0; i < 2024; i++) {
         GenerateAllMoves(board, moveslist);
         for (movenum = 0; movenum < moveslist->count; ++movenum) {
             move = moveslist->moves[movenum].move;
@@ -50,19 +50,59 @@ void StupidGame() {
     }
 }
 
-// vice.c
+void GUI() {
+    S_BOARD *board = CreateNewBoard();
+    S_MOVELIST list[1];
 
-#define PAWNMOVES "rnbqkb1r/pp1p1pPp/8/2p1pP2/1P1P4/3P3P/P1P1P3/RNBQKBNR w KQkq e6 0 1"
-#define PAWNMOVES2 "rnbqkb1r/pp1p1pPp/8/2p1pP2/1P1P4/3P3P/P1P1P3/RNBQKBNR b KQkq - 0 1"
-#define PAWNMOVESW "rnbqkb1r/pp1p1pPp/8/2p1pP2/1P1P4/3P3P/P1P1P3/RNBQKBNR w KQkq e6 0 1"
-#define PAWNMOVESB "rnbqkbnr/p1p1p3/3p3p/1p1p4/2P1Pp2/8/PP1P1PpP/RNBQKB1R b KQkq e3 0 1"
-#define KNIGHTSKINGS "5k2/1n6/4n3/6N1/8/3N4/8/5K2 w - - 0 1"
-#define ROOKS "6k1/8/5r2/8/1nR5/5N2/8/6K1 b - - 0 1"
-#define QUEENS "6k1/8/4nq2/8/1nQ5/5N2/1N6/6K1 b - - 0 1 "
-#define BISHOPS "6k1/1b6/4n3/8/1n4B1/1B3N2/1N6/2b3K1 b - - 0 1 "
+    ParseFen(START_FEN, board);
+    printf("Initial evaluation %d\n", EvalPosition(board));
+    // PerftTest(3,board);
 
-int main() {
+    char input[6];
+    int Move = NOMOVE;
+    while (TRUE) {
+        PrintBoard(board);
+        printf("Please enter a move > ");
+        fgets(input, 6, stdin);
+
+        if (input[0] == 'q') {
+            break;
+        } else if (input[0] == 't') {
+            TakeMove(board);
+        } else {
+            Move = ParseMove(input, board);
+            if (Move != NOMOVE) {
+                MakeMove(board, Move);
+                //                if (IsRepetition(board)) {
+                //                    printf("REP SEEN\n");
+                //                }
+            } else {
+                printf("Move Not Parsed:%s\n", input);
+            }
+        }
+
+        fflush(stdin);
+    }
+}
+
+void UCILoop() { printf("UCI loop TBD"); }
+
+int main(int argc, char **argv) {
     AllInit();
-    TestPerf();
+    if (argc == 2) {
+        switch (*argv[1]) {
+        case 'p':
+            TestPerf();
+            break;
+        case 'g':
+            GUI();
+            break;
+        default:
+            UCILoop();
+            break;
+        }
+    } else {
+        UCILoop();
+    }
     return 0;
 }

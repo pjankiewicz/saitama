@@ -13,12 +13,13 @@ typedef unsigned long long U64;
 
 #define MAXGAMEMOVES 2048 // max half moves
 #define MAXPOSITIONMOVES 256
+#define MAXDEPTH 64
 
 #define START_FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
 
-#define PRINTARRAY(array, length) \
-for(int i = 0; i < length; i++) \
-    printf("%d\t", array[i]);
+#define PRINTARRAY(array, length)                                                                                      \
+    for (int i = 0; i < (length); i++)                                                                                 \
+        printf("%d\t", (array)[i]);
 
 enum { EMPTY, wP, wN, wB, wR, wQ, wK, bP, bN, bB, bR, bQ, bK };
 
@@ -87,11 +88,22 @@ encode whole move in a single int
 #define MFLAGCAP 0x0007C000
 #define MFLAGPROM 0x00f00000
 #define MOVE(f, t, ca, pro, fl) ((f) | ((t) << 7) | ((ca) << 14) | ((pro) << 20) | (fl))
+#define NOMOVE (0)
 
 typedef struct {
     S_MOVE moves[MAXPOSITIONMOVES];
     int count;
 } S_MOVELIST;
+
+typedef struct {
+    U64 posKey;
+    int move;
+} S_PVENTRY;
+
+typedef struct {
+    S_PVENTRY *p_table;
+    int count;
+} S_PVTABLE;
 
 typedef struct {
     int move;
@@ -127,7 +139,27 @@ typedef struct {
     S_UNDO history[MAXGAMEMOVES];
 
     int pList[13][10]; // where is each piece
+
+    S_PVTABLE pvtable[1];
+    int pvarray[MAXDEPTH];
+    int search_history[13][BRD_SQ_NUM];
+    int search_killers[2][MAXDEPTH];
 } S_BOARD;
+
+typedef struct {
+    int starttime;
+    int stoptime;
+    int depth;
+    int depthset;
+    int timeset;
+    int movestogo;
+    int infinite;
+
+    long nodes;
+
+    int quit;
+    int stopped;
+} S_SEARCHINFO;
 
 extern int sq120to64[BRD_SQ_NUM];
 extern int sq64to120[64];
@@ -150,8 +182,7 @@ extern int sq64to120[64];
 #define IsR(p) ((p) == wR || (p) == bR)
 
 /* GLOBALS */
-extern int sq120to64[BRD_SQ_NUM];
-extern int sq64to120[64];
+
 extern U64 SetMask[64];
 extern U64 ClearMask[64];
 extern int FilesBrd[BRD_SQ_NUM];
@@ -196,6 +227,8 @@ extern void ResetBoard(S_BOARD *pos);
 
 extern void PrintBoard(const S_BOARD *pos);
 
+extern S_BOARD *CreateNewBoard();
+
 // data.c
 
 extern int PiecePawn[13];
@@ -224,11 +257,15 @@ extern void VisualizeAttackedSquares(S_BOARD *pos, int side);
 
 // io.c
 
-extern char *PrSq(const int sq);
+extern char *PrSq(int sq);
 
-extern char *PrMove(const int move);
-extern char *PrMoveDet(const int move);
-void PrintMoveList(const S_MOVELIST *list);
+extern char *PrMove(int move);
+
+extern char *PrMoveDet(int move);
+
+extern void PrintMoveList(const S_MOVELIST *list);
+
+extern int ParseMove(const char *ptrChar, S_BOARD *pos);
 
 // movegen.c
 
@@ -237,34 +274,56 @@ extern const int DOWN;
 extern const int LEFT;
 extern const int RIGHT;
 
-//void AddQuietMove(const S_BOARD *pos, int move, S_MOVELIST *list);
+// void AddQuietMove(const S_BOARD *pos, int move, S_MOVELIST *list);
 //
-//void AddCaptureMove(const S_BOARD *pos, int move, S_MOVELIST *list);
+// void AddCaptureMove(const S_BOARD *pos, int move, S_MOVELIST *list);
 //
-//void AddEnPassantMove(const S_BOARD *pos, int move, S_MOVELIST *list);
+// void AddEnPassantMove(const S_BOARD *pos, int move, S_MOVELIST *list);
 
 void GenerateAllMoves(const S_BOARD *pos, S_MOVELIST *moves);
 
+extern int MoveExists(S_BOARD *pos, int move);
+
 // validate.c
 
-int SqOnBoard(const int sq);
+int SqOnBoard(int sq);
 
-int SideValid(const int side);
+int SideValid(int side);
 
-int FileRankValid(const int fr);
+int FileRankValid(int fr);
 
-int PieceValidEmpty(const int pce);
+int PieceValidEmpty(int pce);
 
-int PieceValid(const int pce);
+int PieceValid(int pce);
 
 // makemove.c
 
-//extern const int CastlePerm[120];
-//extern void ClearPiece(const int sq, S_BOARD *pos);
-//extern void AddPiece(const int sq, S_BOARD *pos, int pce);
-//extern void MovePiece(const int sq, const int to_sq, S_BOARD *pos);
+// extern const int CastlePerm[120];
+// extern void ClearPiece(const int sq, S_BOARD *pos);
+// extern void AddPiece(const int sq, S_BOARD *pos, int pce);
+// extern void MovePiece(const int sq, const int to_sq, S_BOARD *pos);
 extern int MakeMove(S_BOARD *pos, int move);
+
 extern void TakeMove(S_BOARD *pos);
 
 // perft.c
 extern void TestPerf();
+
+// search.c
+extern void SearchPosition(S_BOARD *pos);
+
+extern int IsRepetition(const S_BOARD *pos);
+
+// misc.c
+extern double getRealTime();
+
+// pvtable.c
+extern void InitPvTable(S_PVTABLE *table);
+
+extern void StorePvMove(const S_BOARD *pos, int move);
+
+extern int ProbePvTable(const S_BOARD *pos);
+
+// evaluate.c
+
+extern int EvalPosition(S_BOARD *pos);

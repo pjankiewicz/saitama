@@ -16,11 +16,11 @@ int CheckBoard(const S_BOARD *pos) {
     t_pawns[BOTH] = pos->pawns[BOTH];
 
     // check piece list
-//    PrintBoard(pos);
+    //    PrintBoard(pos);
     for (piece = wP; piece <= bK; ++piece) {
         for (int pce_num = 0; pce_num < pos->pceNum[piece]; ++pce_num) {
             sq120 = pos->pList[piece][pce_num];
-//            printf("piece=%d %s pce_num=%d/%d\n", piece, PrSq(sq120), (pce_num+1), pos->pceNum[piece]);
+            //            printf("piece=%d %s pce_num=%d/%d\n", piece, PrSq(sq120), (pce_num+1), pos->pceNum[piece]);
             assert(pos->pieces[sq120] == piece);
         }
     }
@@ -321,8 +321,15 @@ void PrintBoard(const S_BOARD *pos) {
            pos->castlePerm & BKCA ? 'k' : '-', pos->castlePerm & BQCA ? 'q' : '-');
     printf("PosKey:%0llx\n", pos->posKey);
     printf("History: ");
-    for (int his=0; his < pos->hisPly; his++) {
+    for (int his = 0; his < pos->hisPly; his++) {
         printf("%s ", PrMove(pos->history[his].move));
     }
     printf("\n");
+}
+
+S_BOARD *CreateNewBoard() {
+    static S_BOARD board[1];
+    board->pvtable->p_table = NULL;
+    InitPvTable(board->pvtable);
+    return board;
 }

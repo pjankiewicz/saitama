@@ -29,6 +29,21 @@ const int nonSlidingPiecesDir[2][8] = {
     {UP + LEFT, UP + RIGHT, DOWN + LEFT, DOWN + RIGHT, UP, DOWN, LEFT, RIGHT},
 };
 
+int MoveExists(S_BOARD *pos, const int move) {
+    S_MOVELIST list[1];
+    GenerateAllMoves(pos, list);
+    for (int move_ind = 0; move_ind < list->count; move_ind++) {
+        if (!MakeMove(pos, list->moves[move_ind].move)) {
+            continue;
+        }
+        TakeMove(pos);
+        if (list->moves[move_ind].move == move) {
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
 static void AddQuietMove(const S_BOARD *pos, int move, S_MOVELIST *list) {
     list->moves[list->count].move = move;
     list->moves[list->count].score = 0;
