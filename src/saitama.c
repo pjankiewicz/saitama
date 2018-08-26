@@ -16,6 +16,40 @@ int printBoard() {
     printf("\n\r");
 }
 
+void PrintMove(int move) {
+    int from = FROMSQ(move);
+    int to = TOSQ(move);
+    int captured = CAPTURED(move);
+    printf("Move: %s\n", PrMove(move));
+    printf("From square: %d\n", from);
+    printf("To square: %d\n", to);
+    printf("Captured: %d\n", captured);
+}
+
+void StupidGame() {
+    S_BOARD board[1];
+    S_MOVELIST moveslist[1];
+
+    ParseFen(START_FEN, board);
+    GenerateAllMoves(board, moveslist);
+
+    int movenum = 0;
+    int move = 0;
+
+    for (int i=0; i<2024; i++) {
+        GenerateAllMoves(board, moveslist);
+        for (movenum = 0; movenum < moveslist->count; ++movenum) {
+            move = moveslist->moves[movenum].move;
+            printf("%d %d %d %s\n", i, movenum, moveslist->count, PrMove(move));
+            if (!MakeMove(board, move)) {
+                continue;
+            }
+            PrintBoard(board);
+            break;
+        }
+    }
+}
+
 // vice.c
 
 #define PAWNMOVES "rnbqkb1r/pp1p1pPp/8/2p1pP2/1P1P4/3P3P/P1P1P3/RNBQKBNR w KQkq e6 0 1"
@@ -28,19 +62,7 @@ int printBoard() {
 #define BISHOPS "6k1/1b6/4n3/8/1n4B1/1B3N2/1N6/2b3K1 b - - 0 1 "
 
 int main() {
-
     AllInit();
-
-    S_BOARD board[1];
-
-    ParseFen(BISHOPS, board);
-    PrintBoard(board);
-
-    S_MOVELIST list[1];
-
-    GenerateAllMoves(board, list);
-
-    PrintMoveList(list);
-
+    TestPerf();
     return 0;
 }

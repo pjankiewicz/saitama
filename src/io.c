@@ -38,6 +38,35 @@ char *PrMove(const int move) {
     return MvStr;
 }
 
+char *PrMoveDet(const int move) {
+    static char MvStr[6];
+
+    int ff = FilesBrd[FROMSQ(move)];
+    int rf = RanksBrd[FROMSQ(move)];
+    int ft = FilesBrd[TOSQ(move)];
+    int rt = RanksBrd[TOSQ(move)];
+
+    int promoted = PROMOTED(move);
+
+    if (promoted) {
+        char pchar = 'q';
+        if (IsKn(promoted)) {
+            pchar = 'n';
+        } else if (IsR(promoted)) {
+            pchar = 'r';
+        } else if (IsB(promoted)) {
+            pchar = 'b';
+        } else if (IsQ(promoted)) {
+            pchar = 'q';
+        }
+        sprintf(MvStr, "%c%c%c%c%c prom %d", ('a' + ff), ('1' + rf), ('a' + ft), ('1' + rt), pchar, PROMOTED(move));
+    } else {
+        sprintf(MvStr, "%c%c%c%c prom %d", ('a' + ff), ('1' + rf), ('a' + ft), ('1' + rt), PROMOTED(move));
+    }
+    return MvStr;
+}
+
+
 void PrintMoveList(const S_MOVELIST *list) {
     int index = 0;
     int score = 0;

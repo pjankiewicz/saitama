@@ -1,5 +1,7 @@
 #pragma once
 
+#define NDEBUG
+
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,6 +15,10 @@ typedef unsigned long long U64;
 #define MAXPOSITIONMOVES 256
 
 #define START_FEN "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"
+
+#define PRINTARRAY(array, length) \
+for(int i = 0; i < length; i++) \
+    printf("%d\t", array[i]);
 
 enum { EMPTY, wP, wN, wB, wR, wQ, wK, bP, bN, bB, bR, bQ, bK };
 
@@ -80,6 +86,7 @@ encode whole move in a single int
 #define MFLAGCA 0x01000000
 #define MFLAGCAP 0x0007C000
 #define MFLAGPROM 0x00f00000
+#define MOVE(f, t, ca, pro, fl) ((f) | ((t) << 7) | ((ca) << 14) | ((pro) << 20) | (fl))
 
 typedef struct {
     S_MOVE moves[MAXPOSITIONMOVES];
@@ -211,7 +218,7 @@ extern int QueenMoves[8];
 extern int KingMoves[8];
 extern int RookMoves[4];
 
-extern int SqAttacked(S_BOARD *pos, int sq, int side);
+extern int SqAttacked(const S_BOARD *pos, int sq, int side);
 
 extern void VisualizeAttackedSquares(S_BOARD *pos, int side);
 
@@ -220,15 +227,21 @@ extern void VisualizeAttackedSquares(S_BOARD *pos, int side);
 extern char *PrSq(const int sq);
 
 extern char *PrMove(const int move);
+extern char *PrMoveDet(const int move);
 void PrintMoveList(const S_MOVELIST *list);
 
 // movegen.c
 
-void AddQuietMove(const S_BOARD *pos, int move, S_MOVELIST *list);
+extern const int UP;
+extern const int DOWN;
+extern const int LEFT;
+extern const int RIGHT;
 
-void AddCaptureMove(const S_BOARD *pos, int move, S_MOVELIST *list);
-
-void AddEnPassantMove(const S_BOARD *pos, int move, S_MOVELIST *list);
+//void AddQuietMove(const S_BOARD *pos, int move, S_MOVELIST *list);
+//
+//void AddCaptureMove(const S_BOARD *pos, int move, S_MOVELIST *list);
+//
+//void AddEnPassantMove(const S_BOARD *pos, int move, S_MOVELIST *list);
 
 void GenerateAllMoves(const S_BOARD *pos, S_MOVELIST *moves);
 
@@ -243,3 +256,15 @@ int FileRankValid(const int fr);
 int PieceValidEmpty(const int pce);
 
 int PieceValid(const int pce);
+
+// makemove.c
+
+//extern const int CastlePerm[120];
+//extern void ClearPiece(const int sq, S_BOARD *pos);
+//extern void AddPiece(const int sq, S_BOARD *pos, int pce);
+//extern void MovePiece(const int sq, const int to_sq, S_BOARD *pos);
+extern int MakeMove(S_BOARD *pos, int move);
+extern void TakeMove(S_BOARD *pos);
+
+// perft.c
+extern void TestPerf();

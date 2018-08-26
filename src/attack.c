@@ -42,7 +42,7 @@ int RookMoves[4] = {-10, 1, 10, -1};
 /*
  * Is a square attacked by side
  */
-int SqAttacked(S_BOARD *pos, int sq, int side) {
+int SqAttacked(const S_BOARD *pos, int sq, int side) {
 
     int index, cur_sq, piece;
 
@@ -101,7 +101,6 @@ int SqAttacked(S_BOARD *pos, int sq, int side) {
     for (index = 0; index < 8; ++index) {
         cur_sq = sq + KingMoves[index];
         if (cur_sq != NO_SQ && pos->kingSq[side] == cur_sq) {
-            printf("%d", sq);
             return TRUE;
         }
     }

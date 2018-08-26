@@ -15,14 +15,12 @@ int CheckBoard(const S_BOARD *pos) {
     t_pawns[BLACK] = pos->pawns[BLACK];
     t_pawns[BOTH] = pos->pawns[BOTH];
 
-    PrintBitBoard(pos->pawns[WHITE]);
-    PrintBitBoard(pos->pawns[BLACK]);
-    PrintBitBoard(pos->pawns[BOTH]);
-
     // check piece list
+//    PrintBoard(pos);
     for (piece = wP; piece <= bK; ++piece) {
         for (int pce_num = 0; pce_num < pos->pceNum[piece]; ++pce_num) {
             sq120 = pos->pList[piece][pce_num];
+//            printf("piece=%d %s pce_num=%d/%d\n", piece, PrSq(sq120), (pce_num+1), pos->pceNum[piece]);
             assert(pos->pieces[sq120] == piece);
         }
     }
@@ -134,7 +132,6 @@ int ParseFen(char *fen, S_BOARD *pos) {
     int piece = 0;
     int count = 0;
 
-    printf("Reseting board\n");
     ResetBoard(pos);
 
     while ((rank >= RANK_1) && *fen) {
@@ -255,29 +252,36 @@ int ParseFen(char *fen, S_BOARD *pos) {
 }
 
 void ResetBoard(S_BOARD *pos) {
-    int index = 0;
+    int i = 0;
+    int j = 0;
 
-    for (index = 0; index < BRD_SQ_NUM; ++index) {
-        pos->pieces[index] = OFFBOARD;
+    for (i = 0; i < 13; i++) {
+        for (j = 0; j < 10; j++) {
+            pos->pList[i][j] = OFFBOARD;
+        }
     }
 
-    for (index = 0; index < 64; ++index) {
-        pos->pieces[SQ120(index)] = EMPTY;
+    for (i = 0; i < BRD_SQ_NUM; ++i) {
+        pos->pieces[i] = OFFBOARD;
     }
 
-    for (index = 0; index < 2; index++) {
-        pos->bigPce[index] = 0;
-        pos->majPce[index] = 0;
-        pos->minPce[index] = 0;
-        pos->material[index] = 0;
+    for (i = 0; i < 64; ++i) {
+        pos->pieces[SQ120(i)] = EMPTY;
     }
 
-    for (index = 0; index < 3; index++) {
-        pos->pawns[index] = 0ULL;
+    for (i = 0; i < 2; i++) {
+        pos->bigPce[i] = 0;
+        pos->majPce[i] = 0;
+        pos->minPce[i] = 0;
+        pos->material[i] = 0;
     }
 
-    for (index = 0; index < 13; index++) {
-        pos->pceNum[index] = 0;
+    for (i = 0; i < 3; i++) {
+        pos->pawns[i] = 0ULL;
+    }
+
+    for (i = 0; i < 13; i++) {
+        pos->pceNum[i] = 0;
     }
 
     pos->kingSq[WHITE] = pos->kingSq[BLACK] = NO_SQ;
