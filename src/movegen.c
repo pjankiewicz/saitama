@@ -129,7 +129,7 @@ void GenerateAllMoves(const S_BOARD *pos, S_MOVELIST *list) {
 
         if (pos->castlePerm & WKCA) {
             if (pos->pieces[F1] == EMPTY && pos->pieces[G1] == EMPTY) {
-                if (!SqAttacked(pos, F1, BLACK) && !SqAttacked(pos, G1, BLACK)) {
+                if (!SqAttacked(pos, E1, BLACK) && !SqAttacked(pos, F1, BLACK)) {
                     AddQuietMove(pos, MOVE(E1, G1, EMPTY, EMPTY, MFLAGCA), list);
                 }
             }
@@ -167,7 +167,7 @@ void GenerateAllMoves(const S_BOARD *pos, S_MOVELIST *list) {
 
         if (pos->castlePerm & BKCA) {
             if (pos->pieces[F8] == EMPTY && pos->pieces[G8] == EMPTY) {
-                if (!SqAttacked(pos, F8, WHITE) && !SqAttacked(pos, G8, WHITE)) {
+                if (!SqAttacked(pos, E8, WHITE) && !SqAttacked(pos, F8, WHITE)) {
                     AddQuietMove(pos, MOVE(E8, G8, EMPTY, EMPTY, MFLAGCA), list);
                 }
             }

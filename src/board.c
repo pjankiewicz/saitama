@@ -320,4 +320,9 @@ void PrintBoard(const S_BOARD *pos) {
     printf("castle:%c%c%c%c\n", pos->castlePerm & WKCA ? 'K' : '-', pos->castlePerm & WQCA ? 'Q' : '-',
            pos->castlePerm & BKCA ? 'k' : '-', pos->castlePerm & BQCA ? 'q' : '-');
     printf("PosKey:%0llx\n", pos->posKey);
+    printf("History: ");
+    for (int his=0; his < pos->hisPly; his++) {
+        printf("%s ", PrMove(pos->history[his].move));
+    }
+    printf("\n");
 }

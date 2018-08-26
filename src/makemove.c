@@ -301,15 +301,16 @@ void TakeMove(S_BOARD *pos) {
         }
     }
 
+    MovePiece(to, from, pos);
+
     int captured = CAPTURED(move);
     if (captured != EMPTY) {
-        MovePiece(to, from, pos);                          // move back the piece
         AddPiece(to, pos, captured);                       // add back the captured piece
-    } else if (move & MFLAGPROM) {
-        ClearPiece(to, pos);                               // remove the promoted piece
+    }
+
+    if (PROMOTED(move) != EMPTY) {
+        ClearPiece(from, pos);                               // remove the promoted piece
         AddPiece(from, pos, pos->side == WHITE ? wP : bP); // add back the pawn
-    } else {
-        MovePiece(to, from, pos);
     }
 
     if (PieceKing[pos->pieces[from]]) {
