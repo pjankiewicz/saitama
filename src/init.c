@@ -80,4 +80,5 @@ void AllInit() {
     InitSqMaps();
     InitBitMasks();
     InitFilesRanksBrd();
+    InitMvvLva();
 }

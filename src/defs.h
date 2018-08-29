@@ -1,6 +1,6 @@
 #pragma once
 
-//#define NDEBUG
+#define NDEBUG
 
 #include <assert.h>
 #include <stdio.h>
@@ -147,8 +147,8 @@ typedef struct {
 } S_BOARD;
 
 typedef struct {
-    int starttime;
-    int stoptime;
+    U64 starttime;
+    U64 stoptime;
     int depth;
     int depthset;
     int timeset;
@@ -159,12 +159,14 @@ typedef struct {
 
     int quit;
     int stopped;
+    int fh;
+    int fhf;
 } S_SEARCHINFO;
 
 extern int sq120to64[BRD_SQ_NUM];
 extern int sq64to120[64];
 
-/* MACROS */
+/* MACROS *///
 
 #define FR2SQ(f, r) ((21 + (f) + ((r)*10)))
 #define SQ64(sq120) (sq120to64[(sq120)])
@@ -280,9 +282,11 @@ extern const int RIGHT;
 //
 // void AddEnPassantMove(const S_BOARD *pos, int move, S_MOVELIST *list);
 
-void GenerateAllMoves(const S_BOARD *pos, S_MOVELIST *moves);
+extern void GenerateAllMoves(const S_BOARD *pos, S_MOVELIST *moves);
+extern void GenerateAllCaptures(const S_BOARD *pos, S_MOVELIST *list);
 
 extern int MoveExists(S_BOARD *pos, int move);
+extern void InitMvvLva();
 
 // validate.c
 
@@ -310,20 +314,30 @@ extern void TakeMove(S_BOARD *pos);
 extern void TestPerf();
 
 // search.c
-extern void SearchPosition(S_BOARD *pos);
+extern void SearchPosition(S_BOARD *pos, S_SEARCHINFO *info);
 
 extern int IsRepetition(const S_BOARD *pos);
 
 // misc.c
-extern double getRealTime();
+extern U64 getRealTime();
+extern int InputWaiting();
+extern void ReadInput(S_SEARCHINFO *info);
 
 // pvtable.c
+extern int GetPvLine(S_BOARD *pos, const int depth);
 extern void InitPvTable(S_PVTABLE *table);
 
 extern void StorePvMove(const S_BOARD *pos, int move);
 
 extern int ProbePvTable(const S_BOARD *pos);
+extern void ClearPvTable(S_PVTABLE *table);
 
 // evaluate.c
 
 extern int EvalPosition(S_BOARD *pos);
+
+// uci.c
+
+extern void ParseGo(char* line, S_SEARCHINFO *info, S_BOARD *pos);
+extern void ParsePosition(char* lineIn, S_BOARD *pos);
+extern void UciLoop();

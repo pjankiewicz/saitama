@@ -231,6 +231,33 @@ src/data.c.s:
 	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/data.c.s
 .PHONY : src/data.c.s
 
+src/evaluate.o: src/evaluate.c.o
+
+.PHONY : src/evaluate.o
+
+# target to build an object file
+src/evaluate.c.o:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/evaluate.c.o
+.PHONY : src/evaluate.c.o
+
+src/evaluate.i: src/evaluate.c.i
+
+.PHONY : src/evaluate.i
+
+# target to preprocess a source file
+src/evaluate.c.i:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/evaluate.c.i
+.PHONY : src/evaluate.c.i
+
+src/evaluate.s: src/evaluate.c.s
+
+.PHONY : src/evaluate.s
+
+# target to generate assembly for a file
+src/evaluate.c.s:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/evaluate.c.s
+.PHONY : src/evaluate.c.s
+
 src/hashkeys.o: src/hashkeys.c.o
 
 .PHONY : src/hashkeys.o
@@ -312,6 +339,60 @@ src/io.c.s:
 	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/io.c.s
 .PHONY : src/io.c.s
 
+src/makemove.o: src/makemove.c.o
+
+.PHONY : src/makemove.o
+
+# target to build an object file
+src/makemove.c.o:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/makemove.c.o
+.PHONY : src/makemove.c.o
+
+src/makemove.i: src/makemove.c.i
+
+.PHONY : src/makemove.i
+
+# target to preprocess a source file
+src/makemove.c.i:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/makemove.c.i
+.PHONY : src/makemove.c.i
+
+src/makemove.s: src/makemove.c.s
+
+.PHONY : src/makemove.s
+
+# target to generate assembly for a file
+src/makemove.c.s:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/makemove.c.s
+.PHONY : src/makemove.c.s
+
+src/misc.o: src/misc.c.o
+
+.PHONY : src/misc.o
+
+# target to build an object file
+src/misc.c.o:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/misc.c.o
+.PHONY : src/misc.c.o
+
+src/misc.i: src/misc.c.i
+
+.PHONY : src/misc.i
+
+# target to preprocess a source file
+src/misc.c.i:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/misc.c.i
+.PHONY : src/misc.c.i
+
+src/misc.s: src/misc.c.s
+
+.PHONY : src/misc.s
+
+# target to generate assembly for a file
+src/misc.c.s:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/misc.c.s
+.PHONY : src/misc.c.s
+
 src/movegen.o: src/movegen.c.o
 
 .PHONY : src/movegen.o
@@ -339,6 +420,60 @@ src/movegen.c.s:
 	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/movegen.c.s
 .PHONY : src/movegen.c.s
 
+src/perft.o: src/perft.c.o
+
+.PHONY : src/perft.o
+
+# target to build an object file
+src/perft.c.o:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/perft.c.o
+.PHONY : src/perft.c.o
+
+src/perft.i: src/perft.c.i
+
+.PHONY : src/perft.i
+
+# target to preprocess a source file
+src/perft.c.i:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/perft.c.i
+.PHONY : src/perft.c.i
+
+src/perft.s: src/perft.c.s
+
+.PHONY : src/perft.s
+
+# target to generate assembly for a file
+src/perft.c.s:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/perft.c.s
+.PHONY : src/perft.c.s
+
+src/pvtable.o: src/pvtable.c.o
+
+.PHONY : src/pvtable.o
+
+# target to build an object file
+src/pvtable.c.o:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/pvtable.c.o
+.PHONY : src/pvtable.c.o
+
+src/pvtable.i: src/pvtable.c.i
+
+.PHONY : src/pvtable.i
+
+# target to preprocess a source file
+src/pvtable.c.i:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/pvtable.c.i
+.PHONY : src/pvtable.c.i
+
+src/pvtable.s: src/pvtable.c.s
+
+.PHONY : src/pvtable.s
+
+# target to generate assembly for a file
+src/pvtable.c.s:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/pvtable.c.s
+.PHONY : src/pvtable.c.s
+
 src/saitama.o: src/saitama.c.o
 
 .PHONY : src/saitama.o
@@ -365,6 +500,60 @@ src/saitama.s: src/saitama.c.s
 src/saitama.c.s:
 	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/saitama.c.s
 .PHONY : src/saitama.c.s
+
+src/search.o: src/search.c.o
+
+.PHONY : src/search.o
+
+# target to build an object file
+src/search.c.o:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/search.c.o
+.PHONY : src/search.c.o
+
+src/search.i: src/search.c.i
+
+.PHONY : src/search.i
+
+# target to preprocess a source file
+src/search.c.i:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/search.c.i
+.PHONY : src/search.c.i
+
+src/search.s: src/search.c.s
+
+.PHONY : src/search.s
+
+# target to generate assembly for a file
+src/search.c.s:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/search.c.s
+.PHONY : src/search.c.s
+
+src/uci.o: src/uci.c.o
+
+.PHONY : src/uci.o
+
+# target to build an object file
+src/uci.c.o:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/uci.c.o
+.PHONY : src/uci.c.o
+
+src/uci.i: src/uci.c.i
+
+.PHONY : src/uci.i
+
+# target to preprocess a source file
+src/uci.c.i:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/uci.c.i
+.PHONY : src/uci.c.i
+
+src/uci.s: src/uci.c.s
+
+.PHONY : src/uci.s
+
+# target to generate assembly for a file
+src/uci.c.s:
+	$(MAKE) -f CMakeFiles/saitama.dir/build.make CMakeFiles/saitama.dir/src/uci.c.s
+.PHONY : src/uci.c.s
 
 src/validate.o: src/validate.c.o
 
@@ -414,6 +603,9 @@ help:
 	@echo "... src/data.o"
 	@echo "... src/data.i"
 	@echo "... src/data.s"
+	@echo "... src/evaluate.o"
+	@echo "... src/evaluate.i"
+	@echo "... src/evaluate.s"
 	@echo "... src/hashkeys.o"
 	@echo "... src/hashkeys.i"
 	@echo "... src/hashkeys.s"
@@ -423,12 +615,30 @@ help:
 	@echo "... src/io.o"
 	@echo "... src/io.i"
 	@echo "... src/io.s"
+	@echo "... src/makemove.o"
+	@echo "... src/makemove.i"
+	@echo "... src/makemove.s"
+	@echo "... src/misc.o"
+	@echo "... src/misc.i"
+	@echo "... src/misc.s"
 	@echo "... src/movegen.o"
 	@echo "... src/movegen.i"
 	@echo "... src/movegen.s"
+	@echo "... src/perft.o"
+	@echo "... src/perft.i"
+	@echo "... src/perft.s"
+	@echo "... src/pvtable.o"
+	@echo "... src/pvtable.i"
+	@echo "... src/pvtable.s"
 	@echo "... src/saitama.o"
 	@echo "... src/saitama.i"
 	@echo "... src/saitama.s"
+	@echo "... src/search.o"
+	@echo "... src/search.i"
+	@echo "... src/search.s"
+	@echo "... src/uci.o"
+	@echo "... src/uci.i"
+	@echo "... src/uci.s"
 	@echo "... src/validate.o"
 	@echo "... src/validate.i"
 	@echo "... src/validate.s"

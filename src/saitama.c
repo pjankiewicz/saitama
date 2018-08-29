@@ -85,24 +85,35 @@ void GUI() {
     }
 }
 
-void UCILoop() { printf("UCI loop TBD"); }
+//void UCILoop() {
+//    char *fen = "r1b1k2r/ppppnppp/2n2q2/2b5/3NP3/2P1B3/PP3PPP/RN1QKB1R w KQkq - 0 1";
+//    S_BOARD *pos = CreateNewBoard();
+//    S_SEARCHINFO info[1];
+//    info->depth = 6;
+//    ParseFen(fen, pos);
+//    SearchPosition(pos, info);
+//    free(pos->pvtable->p_table);
+//}
 
 int main(int argc, char **argv) {
     AllInit();
     if (argc == 2) {
         switch (*argv[1]) {
-        case 'p':
-            TestPerf();
-            break;
-        case 'g':
-            GUI();
-            break;
-        default:
-            UCILoop();
-            break;
+            case 'p':
+                TestPerf();
+                break;
+            case 'g':
+                GUI();
+                break;
+            case 's':
+                UciLoop();
+                break;
+            default:
+                UciLoop();
+                break;
         }
     } else {
-        UCILoop();
+        UciLoop();
     }
     return 0;
 }
