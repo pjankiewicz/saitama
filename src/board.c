@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "mlp.h"
 
 int CheckBoard(const S_BOARD *pos) {
     int t_pceNum[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -196,7 +197,11 @@ int ParseFen(char *fen, S_BOARD *pos) {
         }
 
         for (int i = 0; i < count; i++) {
-            pos->pieces[FR2SQ(file, rank)] = piece;
+            int sq = FR2SQ(file, rank);
+            pos->pieces[sq] = piece;
+            if (PieceValid(piece)) {
+                NNChangePiece(piece, sq, 1);
+            }
             file += 1;
         }
         fen++;
@@ -205,6 +210,10 @@ int ParseFen(char *fen, S_BOARD *pos) {
     assert(*fen == 'w' || *fen == 'b');
 
     pos->side = (*fen == 'w') ? WHITE : BLACK;
+    if (pos->side) {
+//        NNChangeFlag(NN_FEAT_TURN, 1);
+    }
+
     fen += 2;
 
     // castle permissions
@@ -212,15 +221,19 @@ int ParseFen(char *fen, S_BOARD *pos) {
         switch (*fen) {
         case 'K':
             pos->castlePerm |= WKCA;
+            NNChangeFlag(NN_FEAT_WKCA, 1);
             break;
         case 'Q':
             pos->castlePerm |= WQCA;
+            NNChangeFlag(NN_FEAT_WQCA, 1);
             break;
         case 'k':
             pos->castlePerm |= BKCA;
+            NNChangeFlag(NN_FEAT_BKCA, 1);
             break;
         case 'q':
             pos->castlePerm |= BQCA;
+            NNChangeFlag(NN_FEAT_BQCA, 1);
             break;
         case '-':
             break;
@@ -297,6 +310,8 @@ void ResetBoard(S_BOARD *pos) {
     pos->posKey = 1ULL;
 
     pos->material[WHITE] = pos->material[BLACK] = 0;
+
+    NNReset();
 }
 
 void PrintBoard(const S_BOARD *pos) {

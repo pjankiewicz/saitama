@@ -9,7 +9,7 @@ const int LEFT = -1;
 const int RIGHT = 1;
 const int WHITE_PAWN_CAPTURES[] = {UP + LEFT, UP + RIGHT};
 const int BLACK_PAWN_CAPTURES[] = {DOWN + LEFT, DOWN + RIGHT};
-const int VictimScore[13] = {0,100,200,300,400,500,600,100,200,300,400,500,600};
+const int VictimScore[13] = {0, 100, 200, 300, 400, 500, 600, 100, 200, 300, 400, 500, 600};
 const int PAWN_CAPTURE_SCORE = 105; // pawn captured by pawn score
 static int MvvLvaScores[13][13];
 
@@ -36,7 +36,7 @@ const int nonSlidingPiecesDir[2][8] = {
 void InitMvvLva() {
     for (int attacker = wP; attacker <= bK; attacker++) {
         for (int victim = wP; victim <= bK; victim++) {
-            MvvLvaScores[victim][attacker] = VictimScore[victim] + 6 - (VictimScore[attacker]/100);
+            MvvLvaScores[victim][attacker] = VictimScore[victim] + 6 - (VictimScore[attacker] / 100);
         }
     }
 }
@@ -57,20 +57,35 @@ int MoveExists(S_BOARD *pos, const int move) {
 }
 
 static void AddQuietMove(const S_BOARD *pos, int move, S_MOVELIST *list) {
+    assert(SqOnBoard(FROMSQ(move)));
+    assert(SqOnBoard(TOSQ(move)));
     list->moves[list->count].move = move;
-    list->moves[list->count].score = 0;
+    if (pos->search_killers[0][pos->ply] == move) {
+        list->moves[list->count].score = 900000;
+    } else if (pos->search_killers[1][pos->ply] == move) {
+        list->moves[list->count].score = 800000;
+    } else {
+        list->moves[list->count].score = pos->search_history[pos->pieces[FROMSQ(move)]][TOSQ(move)];
+    }
+
+    if (list->moves[list->count].score == 0) {
+        //        int delta = PieceSquareEvals[pos->pieces[FROMSQ(move)]][SQ64(TOSQ(move))] -
+        //        PieceSquareEvals[pos->pieces[FROMSQ(move)]][SQ64(FROMSQ(move))]; list->moves[list->count].score =
+        //        (delta * (pos->side==WHITE)) ? 1 : -1; printf("%d\n", delta);
+    }
+
     list->count++;
 }
 
 static void AddCaptureMove(const S_BOARD *pos, int move, S_MOVELIST *list) {
     list->moves[list->count].move = move;
-    list->moves[list->count].score = MvvLvaScores[CAPTURED(move)][pos->pieces[FROMSQ(move)]];
+    list->moves[list->count].score = MvvLvaScores[CAPTURED(move)][pos->pieces[FROMSQ(move)]] + 1000000;
     list->count++;
 }
 
 static void AddEnPassantMove(const S_BOARD *pos, int move, S_MOVELIST *list) {
     list->moves[list->count].move = move;
-    list->moves[list->count].score = PAWN_CAPTURE_SCORE;
+    list->moves[list->count].score = PAWN_CAPTURE_SCORE + 1000000;
     list->count++;
 }
 
@@ -259,7 +274,6 @@ void GenerateAllMoves(const S_BOARD *pos, S_MOVELIST *list) {
     }
 }
 
-
 void GenerateAllCaptures(const S_BOARD *pos, S_MOVELIST *list) {
     assert(CheckBoard(pos));
 
@@ -322,8 +336,6 @@ void GenerateAllCaptures(const S_BOARD *pos, S_MOVELIST *list) {
                     } else if (PieceCol[pos->pieces[t_sq]] == (side ^ 1)) {
                         AddCaptureMove(pos, MOVE(sq, t_sq, pos->pieces[t_sq], EMPTY, 0), list);
                         break;
-                    } else {
-                        assert(0); // this shouldn't happen
                     }
                 }
             }
@@ -345,8 +357,6 @@ void GenerateAllCaptures(const S_BOARD *pos, S_MOVELIST *list) {
                     continue;
                 } else if (PieceCol[pos->pieces[t_sq]] == (side ^ 1)) {
                     AddCaptureMove(pos, MOVE(sq, t_sq, pos->pieces[t_sq], 0, 0), list);
-                } else {
-                    assert(0); // this shouldn't happen
                 }
             }
         }

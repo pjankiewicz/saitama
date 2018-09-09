@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "mlp.h"
 
 #define HASH_PCE(pce, sq) (pos->posKey ^= PieceKeys[(pce)][(sq)])
 #define HASH_CA (pos->posKey ^= CastleKeys[pos->castlePerm])
@@ -67,6 +68,10 @@ static void ClearPiece(const int sq, S_BOARD *pos) {
     pos->pceNum[pce]--;
     pos->pList[pce][t_pceNum] = pos->pList[pce][pos->pceNum[pce]];
     pos->pieces[sq] = EMPTY;
+
+    // update nn
+    assert(PieceValid(pce));
+    NNChangePiece(pce, sq, 0);
 }
 
 static void AddPiece(const int sq, S_BOARD *pos, int pce) {
@@ -94,6 +99,10 @@ static void AddPiece(const int sq, S_BOARD *pos, int pce) {
     // update pList
     pos->pList[pce][pos->pceNum[pce]++] = sq;
     pos->pieces[sq] = pce;
+
+    // update nn
+    assert(PieceValid(pce));
+    NNChangePiece(pce, sq, 1);
 }
 
 static void MovePiece(const int sq, const int to_sq, S_BOARD *pos) {
@@ -103,7 +112,6 @@ static void MovePiece(const int sq, const int to_sq, S_BOARD *pos) {
 
     int pce = pos->pieces[sq];
     int col = PieceCol[pce];
-    int t_pceNum = 0;
 
     assert(PieceValid(pce));
 
@@ -130,6 +138,11 @@ static void MovePiece(const int sq, const int to_sq, S_BOARD *pos) {
 
     pos->pieces[sq] = EMPTY;
     pos->pieces[to_sq] = pce;
+
+    // update nn
+    assert(PieceValid(pce));
+    NNChangePiece(pce, sq, 0);
+    NNChangePiece(pce, to_sq, 1);
 }
 
 /* Returns 0 is the move is invalid */
@@ -187,8 +200,16 @@ int MakeMove(S_BOARD *pos, int move) {
         HASH_EP;
     HASH_CA;
 
+    int oldCastlePerm = pos->castlePerm;
     pos->castlePerm &= CastlePerm[from];
     pos->castlePerm &= CastlePerm[to];
+    if (oldCastlePerm != pos->castlePerm) {
+        if (oldCastlePerm & WKCA && !(pos->castlePerm & WKCA)) NNChangeFlag(NN_FEAT_WKCA, 0);
+        if (oldCastlePerm & WQCA && !(pos->castlePerm & WQCA)) NNChangeFlag(NN_FEAT_WQCA, 0);
+        if (oldCastlePerm & BKCA && !(pos->castlePerm & BKCA)) NNChangeFlag(NN_FEAT_BKCA, 0);
+        if (oldCastlePerm & BQCA && !(pos->castlePerm & BQCA)) NNChangeFlag(NN_FEAT_BQCA, 0);
+    }
+
     pos->enPas = NO_SQ;
 
     HASH_CA;
@@ -232,6 +253,7 @@ int MakeMove(S_BOARD *pos, int move) {
     }
 
     pos->side ^= 1;
+//    NNChangeFlag(NN_FEAT_TURN, pos->side ? 1 : 0);
     HASH_SIDE;
 
     assert(CheckBoard(pos));
@@ -254,17 +276,27 @@ void TakeMove(S_BOARD *pos) {
         HASH_EP;
     HASH_CA;
 
+    if (undo.castlePerm != pos->castlePerm) {
+        if (undo.castlePerm & WKCA && !(pos->castlePerm & WKCA)) NNChangeFlag(NN_FEAT_WKCA, 1);
+        if (undo.castlePerm & WQCA && !(pos->castlePerm & WQCA)) NNChangeFlag(NN_FEAT_WQCA, 1);
+        if (undo.castlePerm & BKCA && !(pos->castlePerm & BKCA)) NNChangeFlag(NN_FEAT_BKCA, 1);
+        if (undo.castlePerm & BQCA && !(pos->castlePerm & BQCA)) NNChangeFlag(NN_FEAT_BQCA, 1);
+    }
+
     pos->castlePerm = undo.castlePerm;
     pos->enPas = undo.enPas;
     pos->fiftyMove = undo.fiftyMove;
     pos->hisPly--;
     pos->ply--;
 
+
+
     if (pos->enPas != NO_SQ)
         HASH_EP;
     HASH_CA;
 
     pos->side ^= 1;
+//    NNChangeFlag(NN_FEAT_TURN, pos->side ? 1 : 0);
     HASH_SIDE;
 
     int from = FROMSQ(move);

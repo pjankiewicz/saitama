@@ -37,13 +37,14 @@ void ClearPvTable(S_PVTABLE *table) {
 }
 
 void InitPvTable(S_PVTABLE *table) {
-    const int PvSize = 0x100900 * 2;
+    const int PvSize = 0x100900 * 100;
     table->count = PvSize / sizeof(S_PVENTRY);
     table->count -= 2; // just to make sure we don't go over
     if (table->p_table != NULL) {
         free(table->p_table);
     }
     table->p_table = (S_PVENTRY *)malloc(table->count * sizeof(S_PVENTRY));
+    printf("Init pv table with %d entries\n", table->count);
     ClearPvTable(table);
 }
 
@@ -56,7 +57,7 @@ void StorePvMove(const S_BOARD *pos, const int move) {
 
 int ProbePvTable(const S_BOARD *pos) {
     U64 index = pos->posKey % pos->pvtable->count;
-    assert(index >= 0 && index && index < pos->pvtable->count);
+    assert(index >= 0 && index < pos->pvtable->count);
     if (pos->pvtable->p_table[index].posKey == pos->posKey) {
         return pos->pvtable->p_table[index].move;
     }

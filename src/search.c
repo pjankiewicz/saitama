@@ -7,7 +7,7 @@ const int DRAW = 0;
 static void CheckUp(S_SEARCHINFO *info) {
     // .. check if time up, or interrupt from GUI
     if (info->timeset == TRUE && getRealTime() > info->stoptime) {
-//        printf("%ull %ull\n", getRealTime(), info->stoptime);
+        //        printf("%ull %ull\n", getRealTime(), info->stoptime);
         info->stopped = TRUE;
     }
     ReadInput(info);
@@ -15,12 +15,11 @@ static void CheckUp(S_SEARCHINFO *info) {
 
 static void PickNextMove(int move_num, S_MOVELIST *list) {
     S_MOVE temp;
-    int best_score = -INFINITE;
+    int best_score = 0;
     int best_num = move_num;
     for (int index = move_num; index < list->count; index++) {
-//        printf("%d %d %d\n", move_num, best_num, best_score);
         if (list->moves[index].score > best_score) {
-            best_score = list->moves[move_num].score;
+            best_score = list->moves[index].score;
             best_num = index;
         }
     }
@@ -45,8 +44,6 @@ static void ClearForSearch(S_BOARD *pos, S_SEARCHINFO *info) {
             pos->search_killers[index][index2] = 0;
         }
     }
-
-    ClearPvTable(pos->pvtable);
 
     pos->ply = 0;
 
@@ -93,6 +90,17 @@ static int Quiescence(int alpha, int beta, S_BOARD *pos, S_SEARCHINFO *info) {
     int Legal = 0;
     int OldAlpha = alpha;
     int BestMove = NOMOVE;
+
+    int PvMove = ProbePvTable(pos);
+
+    if (PvMove != NOMOVE) {
+        for (MoveNum = 0; MoveNum < list->count; ++MoveNum) {
+            if (list->moves[MoveNum].move == PvMove) {
+                list->moves[MoveNum].score = 2000000;
+                break;
+            }
+        }
+    }
 
     for (MoveNum = 0; MoveNum < list->count; ++MoveNum) {
 
@@ -142,16 +150,6 @@ int IsRepetition(const S_BOARD *pos) {
 static int AlphaBeta(int alpha, int beta, int depth, S_BOARD *pos, S_SEARCHINFO *info, int do_null) {
     assert(CheckBoard(pos));
 
-    if (depth == 0) {
-        return Quiescence(alpha, beta, pos, info);
-    }
-
-    if ((info->nodes & 2047) == 0) {
-        CheckUp(info);
-    }
-
-    info->nodes++;
-
     if (IsRepetition(pos) || pos->fiftyMove >= 100) {
         return DRAW;
     }
@@ -160,11 +158,26 @@ static int AlphaBeta(int alpha, int beta, int depth, S_BOARD *pos, S_SEARCHINFO 
         return EvalPosition(pos);
     }
 
+    int in_check = SqAttacked(pos, pos->kingSq[pos->side], pos->side ^ 1);
+
+//    if (in_check) depth++;
+
+    if (depth == 0) {
+        return Quiescence(alpha, beta, pos, info);
+    }
+
+    if ((info->nodes & 4096) == 0) {
+        CheckUp(info);
+    }
+
+    info->nodes++;
+
+
+
     int legal = 0;
     int old_alpha = alpha;
     int best_move = NOMOVE;
     int cur_score = -INFINITE;
-    int in_check = SqAttacked(pos, pos->kingSq[pos->side], pos->side ^ 1);
     int pvmove = ProbePvTable(pos);
 
     S_MOVELIST moves[1];
@@ -198,10 +211,19 @@ static int AlphaBeta(int alpha, int beta, int depth, S_BOARD *pos, S_SEARCHINFO 
                     info->fhf++;
                 }
                 info->fh++;
-                return beta; // why not alpha
+
+                if (!(moves->moves[move_num].move & MFLAGCAP)) {
+                    pos->search_killers[1][pos->ply] = pos->search_killers[0][pos->ply];
+                    pos->search_killers[0][pos->ply] = moves->moves[move_num].move;
+                }
+
+                return beta;
             }
             alpha = cur_score;
             best_move = moves->moves[move_num].move;
+            if (!(best_move & MFLAGCAP)) {
+                pos->search_history[pos->pieces[FROMSQ(best_move)]][TOSQ(best_move)] += depth;
+            }
         }
     }
 
@@ -232,23 +254,22 @@ void SearchPosition(S_BOARD *pos, S_SEARCHINFO *info) {
 
     for (current_depth = 1; current_depth <= info->depth; current_depth++) {
         best_score = AlphaBeta(-INFINITE, INFINITE, current_depth, pos, info, TRUE);
-        if (info->stopped == TRUE) {
+        if (info->stopped == TRUE && current_depth > 1) {
             break;
         }
         pv_moves = GetPvLine(pos, current_depth);
         best_move = pos->pvarray[0];
-        printf("info score cp %d depth %d nodes %ld time %d ",
-               best_score,current_depth,info->nodes,getRealTime()-info->starttime);
-
+        printf("info score cp %d depth %d nodes %ld time %d ", best_score, current_depth, info->nodes,
+               getRealTime() - info->starttime);
 
         printf("pv ");
         for (pv_num = 0; pv_num < pv_moves; pv_num++) {
             printf(" %s", PrMove(pos->pvarray[pv_num]));
         }
         printf("\n");
-//        if (info->fh > 0) {
-//            printf("Ordering: %.2f\n", (double) info->fhf / info->fh);
-//        }
+        //        if (info->fh > 0) {
+        //            printf("Ordering: %.2f\n", (double) info->fhf / info->fh);
+        //        }
     }
     printf("bestmove %s\n", PrMove(best_move));
 }

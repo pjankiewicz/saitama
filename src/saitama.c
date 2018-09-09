@@ -73,9 +73,6 @@ void GUI() {
             Move = ParseMove(input, board);
             if (Move != NOMOVE) {
                 MakeMove(board, Move);
-                //                if (IsRepetition(board)) {
-                //                    printf("REP SEEN\n");
-                //                }
             } else {
                 printf("Move Not Parsed:%s\n", input);
             }
@@ -85,32 +82,35 @@ void GUI() {
     }
 }
 
-//void UCILoop() {
-//    char *fen = "r1b1k2r/ppppnppp/2n2q2/2b5/3NP3/2P1B3/PP3PPP/RN1QKB1R w KQkq - 0 1";
-//    S_BOARD *pos = CreateNewBoard();
-//    S_SEARCHINFO info[1];
-//    info->depth = 6;
-//    ParseFen(fen, pos);
-//    SearchPosition(pos, info);
-//    free(pos->pvtable->p_table);
-//}
+void Benchmark() {
+    char *fen = "rnb1kbnr/ppp2ppp/8/3pp1q1/8/2N5/PPPPPPPP/R1BQKB1R w KQkq - 0 4";
+    S_BOARD *pos = CreateNewBoard();
+    S_SEARCHINFO info[1];
+    ParseFen(START_FEN, pos);
+
+    printf("eval1: %d\n", EvalPosition(pos));
+
+    info->depth = 8;
+    SearchPosition(pos, info);
+    free(pos->pvtable->p_table);
+}
 
 int main(int argc, char **argv) {
     AllInit();
     if (argc == 2) {
         switch (*argv[1]) {
-            case 'p':
-                TestPerf();
-                break;
-            case 'g':
-                GUI();
-                break;
-            case 's':
-                UciLoop();
-                break;
-            default:
-                UciLoop();
-                break;
+        case 'p':
+            TestPerf();
+            break;
+        case 'g':
+            GUI();
+            break;
+        case 'b':
+            Benchmark();
+            break;
+        default:
+            UciLoop();
+            break;
         }
     } else {
         UciLoop();

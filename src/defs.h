@@ -8,7 +8,7 @@
 
 typedef unsigned long long U64;
 
-#define NAME "Saitama 1.0"
+#define NAME "Saitama 1.0 PS"
 #define BRD_SQ_NUM 120
 
 #define MAXGAMEMOVES 2048 // max half moves
@@ -166,7 +166,7 @@ typedef struct {
 extern int sq120to64[BRD_SQ_NUM];
 extern int sq64to120[64];
 
-/* MACROS *///
+/* MACROS */ //
 
 #define FR2SQ(f, r) ((21 + (f) + ((r)*10)))
 #define SQ64(sq120) (sq120to64[(sq120)])
@@ -283,9 +283,11 @@ extern const int RIGHT;
 // void AddEnPassantMove(const S_BOARD *pos, int move, S_MOVELIST *list);
 
 extern void GenerateAllMoves(const S_BOARD *pos, S_MOVELIST *moves);
+
 extern void GenerateAllCaptures(const S_BOARD *pos, S_MOVELIST *list);
 
 extern int MoveExists(S_BOARD *pos, int move);
+
 extern void InitMvvLva();
 
 // validate.c
@@ -320,24 +322,34 @@ extern int IsRepetition(const S_BOARD *pos);
 
 // misc.c
 extern U64 getRealTime();
+
 extern int InputWaiting();
+
 extern void ReadInput(S_SEARCHINFO *info);
 
 // pvtable.c
 extern int GetPvLine(S_BOARD *pos, const int depth);
+
 extern void InitPvTable(S_PVTABLE *table);
 
 extern void StorePvMove(const S_BOARD *pos, int move);
 
 extern int ProbePvTable(const S_BOARD *pos);
+
 extern void ClearPvTable(S_PVTABLE *table);
 
 // evaluate.c
 
+const int PieceSquareEvals[13][64];
+
 extern int EvalPosition(S_BOARD *pos);
+
+extern int EvalPieceOnSquare(int piece, int square);
 
 // uci.c
 
-extern void ParseGo(char* line, S_SEARCHINFO *info, S_BOARD *pos);
-extern void ParsePosition(char* lineIn, S_BOARD *pos);
+extern void ParseGo(char *line, S_SEARCHINFO *info, S_BOARD *pos);
+
+extern void ParsePosition(char *lineIn, S_BOARD *pos);
+
 extern void UciLoop();

@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "mlp.h"
 
 int sq120to64[BRD_SQ_NUM];
 int sq64to120[64];
@@ -81,4 +82,5 @@ void AllInit() {
     InitBitMasks();
     InitFilesRanksBrd();
     InitMvvLva();
+    NNReadWeights();
 }
