@@ -141,8 +141,7 @@ static void MovePiece(const int sq, const int to_sq, S_BOARD *pos) {
 
     // update nn
     assert(PieceValid(pce));
-    NNChangePiece(pce, sq, 0);
-    NNChangePiece(pce, to_sq, 1);
+    NNMovePiece(pce, sq, to_sq);
 }
 
 /* Returns 0 is the move is invalid */
@@ -174,8 +173,6 @@ int MakeMove(S_BOARD *pos, int move) {
             ClearPiece(to + UP, pos);
         }
     } else if (move & MFLAGCA) {
-        //        printf("%d %s\n", PrSq(to));
-
         assert(pos->pieces[from] == wK || pos->pieces[from] == bK);
         switch (to) {
         case C1:
@@ -204,10 +201,14 @@ int MakeMove(S_BOARD *pos, int move) {
     pos->castlePerm &= CastlePerm[from];
     pos->castlePerm &= CastlePerm[to];
     if (oldCastlePerm != pos->castlePerm) {
-        if (oldCastlePerm & WKCA && !(pos->castlePerm & WKCA)) NNChangeFlag(NN_FEAT_WKCA, 0);
-        if (oldCastlePerm & WQCA && !(pos->castlePerm & WQCA)) NNChangeFlag(NN_FEAT_WQCA, 0);
-        if (oldCastlePerm & BKCA && !(pos->castlePerm & BKCA)) NNChangeFlag(NN_FEAT_BKCA, 0);
-        if (oldCastlePerm & BQCA && !(pos->castlePerm & BQCA)) NNChangeFlag(NN_FEAT_BQCA, 0);
+        if (oldCastlePerm & WKCA && !(pos->castlePerm & WKCA))
+            NNChangeFlag(NN_FEAT_WKCA, 0);
+        if (oldCastlePerm & WQCA && !(pos->castlePerm & WQCA))
+            NNChangeFlag(NN_FEAT_WQCA, 0);
+        if (oldCastlePerm & BKCA && !(pos->castlePerm & BKCA))
+            NNChangeFlag(NN_FEAT_BKCA, 0);
+        if (oldCastlePerm & BQCA && !(pos->castlePerm & BQCA))
+            NNChangeFlag(NN_FEAT_BQCA, 0);
     }
 
     pos->enPas = NO_SQ;
@@ -253,7 +254,7 @@ int MakeMove(S_BOARD *pos, int move) {
     }
 
     pos->side ^= 1;
-//    NNChangeFlag(NN_FEAT_TURN, pos->side ? 1 : 0);
+    //    NNChangeFlag(NN_FEAT_TURN, pos->side ? 1 : 0);
     HASH_SIDE;
 
     assert(CheckBoard(pos));
@@ -277,10 +278,14 @@ void TakeMove(S_BOARD *pos) {
     HASH_CA;
 
     if (undo.castlePerm != pos->castlePerm) {
-        if (undo.castlePerm & WKCA && !(pos->castlePerm & WKCA)) NNChangeFlag(NN_FEAT_WKCA, 1);
-        if (undo.castlePerm & WQCA && !(pos->castlePerm & WQCA)) NNChangeFlag(NN_FEAT_WQCA, 1);
-        if (undo.castlePerm & BKCA && !(pos->castlePerm & BKCA)) NNChangeFlag(NN_FEAT_BKCA, 1);
-        if (undo.castlePerm & BQCA && !(pos->castlePerm & BQCA)) NNChangeFlag(NN_FEAT_BQCA, 1);
+        if (undo.castlePerm & WKCA && !(pos->castlePerm & WKCA))
+            NNChangeFlag(NN_FEAT_WKCA, 1);
+        if (undo.castlePerm & WQCA && !(pos->castlePerm & WQCA))
+            NNChangeFlag(NN_FEAT_WQCA, 1);
+        if (undo.castlePerm & BKCA && !(pos->castlePerm & BKCA))
+            NNChangeFlag(NN_FEAT_BKCA, 1);
+        if (undo.castlePerm & BQCA && !(pos->castlePerm & BQCA))
+            NNChangeFlag(NN_FEAT_BQCA, 1);
     }
 
     pos->castlePerm = undo.castlePerm;
@@ -289,14 +294,12 @@ void TakeMove(S_BOARD *pos) {
     pos->hisPly--;
     pos->ply--;
 
-
-
     if (pos->enPas != NO_SQ)
         HASH_EP;
     HASH_CA;
 
     pos->side ^= 1;
-//    NNChangeFlag(NN_FEAT_TURN, pos->side ? 1 : 0);
+    //    NNChangeFlag(NN_FEAT_TURN, pos->side ? 1 : 0);
     HASH_SIDE;
 
     int from = FROMSQ(move);

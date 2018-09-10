@@ -160,7 +160,7 @@ static int AlphaBeta(int alpha, int beta, int depth, S_BOARD *pos, S_SEARCHINFO 
 
     int in_check = SqAttacked(pos, pos->kingSq[pos->side], pos->side ^ 1);
 
-//    if (in_check) depth++;
+    //    if (in_check) depth++;
 
     if (depth == 0) {
         return Quiescence(alpha, beta, pos, info);
@@ -171,8 +171,6 @@ static int AlphaBeta(int alpha, int beta, int depth, S_BOARD *pos, S_SEARCHINFO 
     }
 
     info->nodes++;
-
-
 
     int legal = 0;
     int old_alpha = alpha;

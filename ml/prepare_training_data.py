@@ -25,13 +25,14 @@ def epd_to_board(data):
     result = float(result)
     board = chess.Board()
     board.set_epd(epd)
-    return (str(board), rnd, board, result)
+    board_mirror = board.mirror()
+    return [(str(board), rnd, board, result),
+            (str(board_mirror), rnd, board_mirror, -result)]
 
 
 def prepare_features(board_result):
     _, rnd, board, result = board_result
     sparse_board = [0] * (8 * 8 * 12)
-    dense_board = [0] * 8 * 8
     for rank in range(8):
         for file in range(8):
             piece = str(board.piece_at(rank * 8 + file))
@@ -39,8 +40,6 @@ def prepare_features(board_result):
                 piece_ind = pieces_list.index(piece)
                 sparse_vector_ind = piece_ind * 8 * 8 + rank * 8 + file
                 sparse_board[sparse_vector_ind] = 1  # pieces_value[piece_ind]
-                dense_vector_ind = rank * 8 + file
-                dense_board[dense_vector_ind] = pieces_value[piece_ind]
 
     flags = []
     flags.append(int(board.turn))
@@ -58,20 +57,22 @@ def prepare_features_only(board):
 data = open(sys.argv[1])
 
 seen = set()
-boards = []
-# for f in tqdm(pool.imap_unordered(epd_to_board, data, chunksize=1000)):
+allboards = []
 n = 0
-for f in tqdm(map(epd_to_board, data)):
-    if f[0] not in seen:
-        boards.append(f)
-        n += 1
-    seen.add(f[0])
+for boards in tqdm(map(epd_to_board, data)):
+    for f in boards:
+        if f[0] not in seen:
+            allboards.append(f)
+            n += 1
+            seen.add(f[0])
+
+data.close()
 
 lsmat = LSMATBuilder()
 yraw = []
 rnds = []
 for row_ind, (rnd, features, result) in tqdm(
-        enumerate(map(prepare_features, boards))):
+        enumerate(map(prepare_features, allboards))):
     yraw.append(result)
     rnds.append(rnd)
     # index first row to have all columns in the right order
@@ -80,5 +81,4 @@ for row_ind, (rnd, features, result) in tqdm(
             lsmat.add_raw(row_ind, col_ind, val)
 
 X = lsmat.get_coo_matrix().tocsr()
-
 joblib.dump((X, yraw, rnds), sys.argv[2], compress=2)

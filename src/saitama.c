@@ -83,10 +83,10 @@ void GUI() {
 }
 
 void Benchmark() {
-    char *fen = "rnb1kbnr/ppp2ppp/8/3pp1q1/8/2N5/PPPPPPPP/R1BQKB1R w KQkq - 0 4";
+    char *fen = "rnbqkb1r/pp3p1p/3p1np1/2pP4/4P3/2N5/PP3PPP/R1BQKBNR w KQkq - 0 7";
     S_BOARD *pos = CreateNewBoard();
     S_SEARCHINFO info[1];
-    ParseFen(START_FEN, pos);
+    ParseFen(fen, pos);
 
     printf("eval1: %d\n", EvalPosition(pos));
 

@@ -5,3 +5,5 @@ saitama
 CMakeCache.txt
 .vscode/
 *.xlsx#
+.ipynb_checkpoints/
+__pycache__

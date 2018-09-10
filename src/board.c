@@ -211,7 +211,7 @@ int ParseFen(char *fen, S_BOARD *pos) {
 
     pos->side = (*fen == 'w') ? WHITE : BLACK;
     if (pos->side) {
-//        NNChangeFlag(NN_FEAT_TURN, 1);
+        //        NNChangeFlag(NN_FEAT_TURN, 1);
     }
 
     fen += 2;
