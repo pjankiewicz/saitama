@@ -13,7 +13,6 @@ int CheckBoard(const S_BOARD *pos) {
     for (piece = wP; piece <= bK; ++piece) {
         for (int pce_num = 0; pce_num < pos->pceNum[piece]; ++pce_num) {
             sq120 = pos->pList[piece][pce_num];
-            //            printf("piece=%d %s pce_num=%d/%d\n", piece, PrSq(sq120), (pce_num+1), pos->pceNum[piece]);
             assert(pos->pieces[sq120] == piece);
         }
     }
@@ -46,8 +45,6 @@ void UpdateListsMaterial(S_BOARD *pos) {
         sq = index;
         piece = pos->pieces[index];
         if (piece != OFFBOARD && piece != EMPTY) {
-            color = PieceCol[piece];
-
             pos->pList[piece][pos->pceNum[piece]] = sq;
 
             if (piece == wK)

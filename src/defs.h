@@ -1,7 +1,7 @@
 #pragma once
 
 #define NDEBUG
-#define NNINC //incremental nn updates
+//#define NNINC //incremental nn updates
 
 #include <assert.h>
 #include <stdio.h>
@@ -22,12 +22,20 @@ typedef unsigned long long U64;
     for (int i = 0; i < (length); i++)                                                                                 \
         printf("%d\t", (array)[i]);
 
-enum { EMPTY, wP, wN, wB, wR, wQ, wK, bP, bN, bB, bR, bQ, bK };
+enum {
+    EMPTY, wP, wN, wB, wR, wQ, wK, bP, bN, bB, bR, bQ, bK
+};
 
-enum { FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, FILE_NONE };
-enum { RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8, RANK_NONE };
+enum {
+    FILE_A, FILE_B, FILE_C, FILE_D, FILE_E, FILE_F, FILE_G, FILE_H, FILE_NONE
+};
+enum {
+    RANK_1, RANK_2, RANK_3, RANK_4, RANK_5, RANK_6, RANK_7, RANK_8, RANK_NONE
+};
 
-enum { WHITE, BLACK, BOTH };
+enum {
+    WHITE, BLACK, BOTH
+};
 
 // clang-format off
 enum {
@@ -44,9 +52,13 @@ enum {
 };
 // clang-format on
 
-enum { FALSE, TRUE };
+enum {
+    FALSE, TRUE
+};
 
-enum { WKCA = 1, WQCA = 2, BKCA = 4, BQCA = 8 };
+enum {
+    WKCA = 1, WQCA = 2, BKCA = 4, BQCA = 8
+};
 
 typedef struct {
     int move;
@@ -115,27 +127,18 @@ typedef struct {
 } S_UNDO;
 
 typedef struct {
-
     int pieces[BRD_SQ_NUM]; // main board
     int kingSq[2];          // where are the kings
-
     int side;  // which side to move
     int enPas; // which square is to take en passant
-
     int fiftyMove; // counter for fifty move rule
-
     int ply;
     int hisPly;
-
     int castlePerm;
-
     U64 posKey;     // unique key generated for each position
     int pceNum[13]; // number of pieces of each type
-
     S_UNDO history[MAXGAMEMOVES];
-
     int pList[13][10]; // where is each piece
-
     S_PVTABLE pvtable[1];
     int pvarray[MAXDEPTH];
     int search_history[13][BRD_SQ_NUM];
@@ -150,9 +153,7 @@ typedef struct {
     int timeset;
     int movestogo;
     int infinite;
-
     long nodes;
-
     int quit;
     int stopped;
     int fh;
@@ -236,10 +237,6 @@ extern int PieceRookQueen[13];
 extern int PieceBishopQueen[13];
 extern int PieceSlides[13];
 
-extern int PieceBig[13];
-extern int PieceMaj[13];
-extern int PieceMin[13];
-extern int PieceVal[13];
 extern int PieceCol[13];
 
 // attack.c
@@ -272,12 +269,6 @@ extern const int DOWN;
 extern const int LEFT;
 extern const int RIGHT;
 
-// void AddQuietMove(const S_BOARD *pos, int move, S_MOVELIST *list);
-//
-// void AddCaptureMove(const S_BOARD *pos, int move, S_MOVELIST *list);
-//
-// void AddEnPassantMove(const S_BOARD *pos, int move, S_MOVELIST *list);
-
 extern void GenerateAllMoves(const S_BOARD *pos, S_MOVELIST *moves);
 
 extern void GenerateAllCaptures(const S_BOARD *pos, S_MOVELIST *list);
@@ -300,10 +291,6 @@ int PieceValid(int pce);
 
 // makemove.c
 
-// extern const int CastlePerm[120];
-// extern void ClearPiece(const int sq, S_BOARD *pos);
-// extern void AddPiece(const int sq, S_BOARD *pos, int pce);
-// extern void MovePiece(const int sq, const int to_sq, S_BOARD *pos);
 extern int MakeMove(S_BOARD *pos, int move);
 
 extern void TakeMove(S_BOARD *pos);
