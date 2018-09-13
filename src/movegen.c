@@ -60,6 +60,7 @@ static void AddQuietMove(const S_BOARD *pos, int move, S_MOVELIST *list) {
     assert(SqOnBoard(FROMSQ(move)));
     assert(SqOnBoard(TOSQ(move)));
     list->moves[list->count].move = move;
+    list->moves[list->count].score = 0;
     if (pos->search_killers[0][pos->ply] == move) {
         list->moves[list->count].score = 900000;
     } else if (pos->search_killers[1][pos->ply] == move) {
@@ -68,11 +69,11 @@ static void AddQuietMove(const S_BOARD *pos, int move, S_MOVELIST *list) {
         list->moves[list->count].score = pos->search_history[pos->pieces[FROMSQ(move)]][TOSQ(move)];
     }
 
-    if (list->moves[list->count].score == 0) {
+//    if (list->moves[list->count].score == 0) {
         //        int delta = PieceSquareEvals[pos->pieces[FROMSQ(move)]][SQ64(TOSQ(move))] -
         //        PieceSquareEvals[pos->pieces[FROMSQ(move)]][SQ64(FROMSQ(move))]; list->moves[list->count].score =
         //        (delta * (pos->side==WHITE)) ? 1 : -1; printf("%d\n", delta);
-    }
+//    }
 
     list->count++;
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #define NDEBUG
-//#define NNINC //incremental nn updates
+#define NNINC //incremental nn updates
 
 #include <assert.h>
 #include <stdio.h>

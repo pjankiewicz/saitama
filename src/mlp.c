@@ -16,7 +16,7 @@ static double relu(double x) {
 
 void NNReadWeights() {
     FILE *wfile;
-    wfile = fopen("ml/weights_256.txt", "r");
+    wfile = fopen("/home/pawel/projects/saitama/ml/weights_256.txt", "r");
     double checksum = 0;
     int cnt = 0;
     for (int j = 0; j < NN_FEATURES; j++) {

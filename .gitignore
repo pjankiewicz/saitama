@@ -7,3 +7,4 @@ CMakeCache.txt
 *.xlsx#
 .ipynb_checkpoints/
 __pycache__
+*.joblib

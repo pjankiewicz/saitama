@@ -227,6 +227,7 @@ int IsThreefold(S_BOARD *board) {
 }
 
 int EvalPosition(S_BOARD *pos) {
+//    NNEvalPositionInc(pos);
     if (pos->side == WHITE) {
         return NNEvalPositionWhite(pos);
     } else {
