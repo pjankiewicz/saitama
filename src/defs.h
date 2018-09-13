@@ -117,7 +117,6 @@ typedef struct {
 typedef struct {
 
     int pieces[BRD_SQ_NUM]; // main board
-    U64 pawns[3];           // 1 bit for each square for 3 colors
     int kingSq[2];          // where are the kings
 
     int side;  // which side to move
@@ -132,10 +131,6 @@ typedef struct {
 
     U64 posKey;     // unique key generated for each position
     int pceNum[13]; // number of pieces of each type
-    int bigPce[2];  // number of non pawns
-    int majPce[2];  // number of major pieces
-    int minPce[2];  // number of min pieces
-    int material[2];
 
     S_UNDO history[MAXGAMEMOVES];
 

@@ -43,21 +43,6 @@ static void ClearPiece(const int sq, S_BOARD *pos) {
 
     HASH_PCE(pce, sq);
 
-    if (PieceBig[pce]) {
-        pos->bigPce[col]--;
-
-        if (PieceMaj[pce]) {
-            pos->majPce[col]--;
-        }
-        if (PieceMin[pce]) {
-            pos->minPce[col]--;
-        }
-    } else {
-        CLRBIT(pos->pawns[col], SQ64(sq));
-        CLRBIT(pos->pawns[BOTH], SQ64(sq));
-    }
-    pos->material[col] -= PieceVal[pce];
-
     // update pList
     for (int i = 0; i < pos->pceNum[pce]; i++) {
         if (pos->pList[pce][i] == sq) {
@@ -81,21 +66,6 @@ static void AddPiece(const int sq, S_BOARD *pos, int pce) {
 
     HASH_PCE(pce, sq);
 
-    if (PieceBig[pce]) {
-        pos->bigPce[col]++;
-
-        if (PieceMaj[pce]) {
-            pos->majPce[col]++;
-        }
-        if (PieceMin[pce]) {
-            pos->minPce[col]++;
-        }
-    } else {
-        SETBIT(pos->pawns[col], SQ64(sq));
-        SETBIT(pos->pawns[BOTH], SQ64(sq));
-    }
-    pos->material[col] += PieceVal[pce];
-
     // update pList
     pos->pList[pce][pos->pceNum[pce]++] = sq;
     pos->pieces[sq] = pce;
@@ -117,13 +87,6 @@ static void MovePiece(const int sq, const int to_sq, S_BOARD *pos) {
 
     HASH_PCE(pce, sq);
     HASH_PCE(pce, to_sq);
-
-    if (PiecePawn[pce]) {
-        CLRBIT(pos->pawns[col], SQ64(sq));
-        SETBIT(pos->pawns[col], SQ64(to_sq));
-        CLRBIT(pos->pawns[BOTH], SQ64(sq));
-        SETBIT(pos->pawns[BOTH], SQ64(to_sq));
-    }
 
     // update pList
     int found = 0;

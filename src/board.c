@@ -3,18 +3,10 @@
 
 int CheckBoard(const S_BOARD *pos) {
     int t_pceNum[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    int t_bigPce[] = {0, 0};
-    int t_majPce[] = {0, 0};
-    int t_minPce[] = {0, 0};
-    int t_material[] = {0, 0};
 
     int sq64, sq120, piece, color, pawn_count;
 
     U64 t_pawns[3] = {0ULL, 0ULL, 0ULL};
-
-    t_pawns[WHITE] = pos->pawns[WHITE];
-    t_pawns[BLACK] = pos->pawns[BLACK];
-    t_pawns[BOTH] = pos->pawns[BOTH];
 
     // check piece list
     //    PrintBoard(pos);
@@ -29,29 +21,12 @@ int CheckBoard(const S_BOARD *pos) {
     for (int index = 0; index < 64; index++) {
         sq120 = SQ120(index);
         piece = pos->pieces[sq120];
-        color = PieceCol[piece];
         t_pceNum[piece]++;
-        if (PieceBig[piece])
-            t_bigPce[color]++;
-        if (PieceMaj[piece])
-            t_majPce[color]++;
-        if (PieceMin[piece])
-            t_minPce[color]++;
-        t_material[color] += PieceVal[piece];
     }
 
     for (int i = wP; i <= bK; i++) {
         assert(pos->pceNum[i] == t_pceNum[i]);
     }
-
-    assert(pos->material[WHITE] == t_material[WHITE]);
-    assert(pos->material[BLACK] == t_material[BLACK]);
-    assert(pos->bigPce[WHITE] == t_bigPce[WHITE]);
-    assert(pos->bigPce[BLACK] == t_bigPce[BLACK]);
-    assert(pos->majPce[WHITE] == t_majPce[WHITE]);
-    assert(pos->majPce[BLACK] == t_majPce[BLACK]);
-    assert(pos->minPce[WHITE] == t_minPce[WHITE]);
-    assert(pos->minPce[BLACK] == t_minPce[BLACK]);
 
     assert(pos->posKey == GeneratePosKey(pos));
 
@@ -59,26 +34,6 @@ int CheckBoard(const S_BOARD *pos) {
         assert(RanksBrd[pos->enPas] == RANK_6);
     if ((pos->side == BLACK) && (pos->enPas != NO_SQ))
         assert(RanksBrd[pos->enPas] == RANK_3);
-
-    pawn_count = CNT(t_pawns[WHITE]);
-    assert(pawn_count == pos->pceNum[wP]);
-    pawn_count = CNT(t_pawns[BLACK]);
-    assert(pawn_count == pos->pceNum[bP]);
-    pawn_count = CNT(t_pawns[BOTH]);
-    assert(pawn_count == pos->pceNum[wP] + pos->pceNum[bP]);
-
-    while (t_pawns[WHITE]) {
-        sq64 = POP(&t_pawns[WHITE]);
-        assert(pos->pieces[SQ120(sq64)] == wP);
-    }
-    while (t_pawns[BLACK]) {
-        sq64 = POP(&t_pawns[BLACK]);
-        assert(pos->pieces[SQ120(sq64)] == bP);
-    }
-    while (t_pawns[BOTH]) {
-        sq64 = POP(&t_pawns[BOTH]);
-        assert((pos->pieces[SQ120(sq64)] == wP) || (pos->pieces[SQ120(sq64)] == bP));
-    }
 
     assert(pos->side == WHITE || pos->side == BLACK);
 
@@ -92,13 +47,6 @@ void UpdateListsMaterial(S_BOARD *pos) {
         piece = pos->pieces[index];
         if (piece != OFFBOARD && piece != EMPTY) {
             color = PieceCol[piece];
-            if (PieceBig[piece])
-                pos->bigPce[color]++;
-            if (PieceMaj[piece])
-                pos->majPce[color]++;
-            if (PieceMin[piece])
-                pos->minPce[color]++;
-            pos->material[color] += PieceVal[piece];
 
             pos->pList[piece][pos->pceNum[piece]] = sq;
 
@@ -106,14 +54,6 @@ void UpdateListsMaterial(S_BOARD *pos) {
                 pos->kingSq[WHITE] = sq;
             if (piece == bK)
                 pos->kingSq[BLACK] = sq;
-
-            if (piece == wP) {
-                SETBIT(pos->pawns[WHITE], SQ64(sq));
-                SETBIT(pos->pawns[BOTH], SQ64(sq));
-            } else if (piece == bP) {
-                SETBIT(pos->pawns[BLACK], SQ64(sq));
-                SETBIT(pos->pawns[BOTH], SQ64(sq));
-            }
 
             pos->pceNum[piece]++;
         }
@@ -282,17 +222,6 @@ void ResetBoard(S_BOARD *pos) {
         pos->pieces[SQ120(i)] = EMPTY;
     }
 
-    for (i = 0; i < 2; i++) {
-        pos->bigPce[i] = 0;
-        pos->majPce[i] = 0;
-        pos->minPce[i] = 0;
-        pos->material[i] = 0;
-    }
-
-    for (i = 0; i < 3; i++) {
-        pos->pawns[i] = 0ULL;
-    }
-
     for (i = 0; i < 13; i++) {
         pos->pceNum[i] = 0;
     }
@@ -308,8 +237,6 @@ void ResetBoard(S_BOARD *pos) {
 
     pos->castlePerm = 0;
     pos->posKey = 1ULL;
-
-    pos->material[WHITE] = pos->material[BLACK] = 0;
 
     NNReset();
 }

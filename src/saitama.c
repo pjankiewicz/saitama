@@ -83,6 +83,15 @@ void GUI() {
 }
 
 void Benchmark() {
+    // 8111
+    /*
+     * info score cp 150 depth 1 nodes 54 time 0 pv  d1a
+     * info score cp 90 depth 2 nodes 440 time 3 pv  f1c4 f8g7
+     * info score cp 158 depth 3 nodes 3635 time 21 pv  f1b5 b8d7 c1f4
+     * info score cp 97 depth 4 nodes 26252 time 153 pv  f1b5 b8d7 g1f3 f8g7
+     * info score cp 126 depth 5 nodes 202267 time 1055 pv  c1g5 f8g7 f1b5 c8d7 a1c1
+     * info score cp 59 depth 6 nodes 1257902 time 8111 pv  f1b5 b8d7 c1f4 a7a6 b5d7 f6d7
+     */
     char *fen = "rnbqkb1r/pp3p1p/3p1np1/2pP4/4P3/2N5/PP3PPP/R1BQKBNR w KQkq - 0 7";
     S_BOARD *pos = CreateNewBoard();
     S_SEARCHINFO info[1];
@@ -90,7 +99,7 @@ void Benchmark() {
 
     printf("eval1: %d\n", EvalPosition(pos));
 
-    info->depth = 8;
+    info->depth = 6;
     SearchPosition(pos, info);
     free(pos->pvtable->p_table);
 }
